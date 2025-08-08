@@ -6,7 +6,8 @@ import com.google.codelab.gamingzone.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.codelab.gamingzone.data.local.entity.UserProfileEntity
-import com.google.codelab.gamingzone.data.mapper.GameStats
+
+import com.google.codelab.gamingzone.data.model.GameStats
 import com.google.codelab.gamingzone.domain.repository.GameResultRepository
 import com.google.codelab.gamingzone.domain.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,6 +70,8 @@ class UserProfileViewModel @Inject constructor(
 //
 //        _gameStats.value = gameResultRepository.getGameStatsGrouped(userId)
 //    }
+
+
 
     fun saveProfile(username: String,avatarId:Int,unlockedAvatars:List<Int>) {
         viewModelScope.launch {

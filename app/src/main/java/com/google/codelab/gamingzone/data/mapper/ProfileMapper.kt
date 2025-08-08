@@ -13,7 +13,7 @@ fun UserProfile.toUserProfileEntity(): UserProfileEntity {
         gamesPlayed = gamesPlayed,
         highestScore = highestScore,
         totalPlayTimeInMinutes = totalPlayTimeInMinutes,
-        renameTickets = renameTickets,,
+        renameTickets = renameTickets,
     )
 }
 

@@ -5,7 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.google.codelab.gamingzone.data.local.entity.GameResultEntity
-import com.google.codelab.gamingzone.data.mapper.GameStats
+
+import com.google.codelab.gamingzone.data.model.GameStats
 
 @Dao
 interface GameResultDao {
@@ -19,8 +20,8 @@ interface GameResultDao {
     @Query("SELECT COUNT(*) FROM game_results WHERE userId = :userId")
     suspend fun getTotalGamesPlayed(userId: String): Int
 
-    @Query("SELECT gameName, difficulty, COUNT(*) as timesPlayed, SUM(CASE WHEN isWin = 1 THEN 1 ELSE 0 END) as wins FROM game_results WHERE userId = :userId GROUP BY gameName, difficulty")
-    suspend fun getGameStatsGrouped(userId: String): List<GameStats>
+  //  @Query("SELECT gameName, difficulty, COUNT(*) as timesPlayed, SUM(CASE WHEN isWin = 1 THEN 1 ELSE 0 END) as wins FROM game_results WHERE userId = :userId GROUP BY gameName, difficulty")
+//    suspend fun getGameStatsGrouped(userId: String): List<GameStats>
 }
 
 

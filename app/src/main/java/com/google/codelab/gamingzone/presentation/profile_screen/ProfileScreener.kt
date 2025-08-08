@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -124,5 +125,27 @@ fun ProfileScreener(
             )
             Text("TotalPlayTime: ${profile.totalPlayTimeInMinutes % 100} / 100")
         }
+    }
+
+    profile?.let {
+        val sudokuStats = profile.gameStats["sudoku"]
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            if (sudokuStats!=null) {
+                Text("TotalGames: ${sudokuStats.gamesPlayed}")
+                Text("Wins: ${sudokuStats.wins}")
+                Text("Losses: ${sudokuStats.losses}")
+                Text("Draws: ${sudokuStats.totalDraws}")
+                Text("Easy games played: ${sudokuStats.easyGamesPlayed}")
+                Text("Medium games played: ${sudokuStats.mediumGamesPlayed}")
+                Text("Hard games played: ${sudokuStats.hardGamesPlayed}")
+            } else {
+                Text("No sudoku games played yet")
+            }
+        }
+    } ?: run {
+        CircularProgressIndicator(modifier = Modifier.padding(12.dp))
     }
 }

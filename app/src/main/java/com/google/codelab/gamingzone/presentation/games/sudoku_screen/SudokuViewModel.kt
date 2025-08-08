@@ -6,6 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.codelab.gamingzone.data.local.entity.UserProfileEntity
+import com.google.codelab.gamingzone.data.model.GameResult
+import com.google.codelab.gamingzone.data.model.GameStats
+
 import com.google.codelab.gamingzone.domain.model.GameItem
 import com.google.codelab.gamingzone.domain.sudoku.PuzzleGenerator
 import com.google.codelab.gamingzone.presentation.games.trap_bot.DifficultyLevel
@@ -174,6 +178,25 @@ class SudokuViewModel @Inject constructor(
                         isTimerRunning = false
                     )
                     viewModelScope.launch {
+                        updateAfterGame(
+                            currentUser = UserProfileEntity(
+                                currentXP = 34,
+                                xpToNextLevel = 54,
+                                gamesPlayed = 43,
+                                highestScore = 43,
+                                totalPlayTimeInMinutes = 23,
+                                renameTickets = 1,
+                                username = "Guarav",
+                                avatarId = 1
+                            ),
+                            result= GameResult(
+                                gameName = "sudoku",
+                                difficulty = difficulty,
+                                isWin = true,
+                                isDraw = false,
+                                xpEarned = xpEarned
+                            )
+                        )
                         saveSudokuResult()
                         _event.emit(SudokuGameEvent.PuzzleSolved)
                     }
@@ -288,6 +311,52 @@ class SudokuViewModel @Inject constructor(
 //                    !isValidMove(board, row, col, board[row][col].value)
 //                }
 //    }
+
+    fun updateAfterGame(
+        currentUser: UserProfileEntity,
+        result: GameResult
+    ): UserProfileEntity {
+
+        val newTotalGames = currentUser.gamesPlayed +1
+        val newXp= currentUser.currentXP+result.xpEarned
+        var newLevel = currentUser.level
+        var newXpToNewLevel = currentUser.xpToNextLevel
+        var remainingXp = newXp
+
+        while (remainingXp >= newXpToNewLevel) {
+            remainingXp -= newXpToNewLevel
+            newLevel++
+            newXpToNewLevel +=50
+        }
+
+        val finalXp = remainingXp
+
+        val currentGameStats = currentUser.gameStats[result.gameName]
+
+        val updatedGameStats = currentGameStats?.copy(
+            gamesPlayed = currentGameStats.gamesPlayed+1,
+            wins = if (result.isWin==true) currentGameStats.wins+1 else currentGameStats.wins,
+            losses = if (result.isWin==false) currentGameStats.losses+1 else currentGameStats.losses,
+            totalDraws = if (result.isDraw) currentGameStats.totalDraws+1 else currentGameStats.totalDraws,
+            easyGamesPlayed = if (result.difficulty == Difficulty.EASY) currentGameStats.easyGamesPlayed+1 else currentGameStats.easyGamesPlayed,
+            mediumGamesPlayed = if (result.difficulty == Difficulty.MEDIUM) currentGameStats.mediumGamesPlayed+1 else currentGameStats.mediumGamesPlayed,
+            hardGamesPlayed = if (result.difficulty == Difficulty.HARD) currentGameStats.hardGamesPlayed+1 else currentGameStats.hardGamesPlayed
+        )
+
+        val updatedGameStatsMap = currentUser.gameStats.toMutableMap()
+
+        updatedGameStatsMap[result.gameName] == updatedGameStats
+
+        return currentUser.copy(
+            gamesPlayed = newTotalGames,
+            currentXP = finalXp,
+            level = newLevel,
+            gameStats = updatedGameStatsMap
+        )
+
+
+
+    }
 
     private fun isPuzzleSolved(board: List<List<Cell>>): Boolean {
         val solution = state.value.solutionBoard
