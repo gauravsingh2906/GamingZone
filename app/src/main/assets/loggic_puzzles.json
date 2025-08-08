@@ -1,0 +1,92 @@
+[
+  {
+    "level": 1,
+    "context": "A vase was broken in the museum at 3 PM. Three people were near the exhibit.",
+    "characters": [
+      { "name": "Alice", "statement": "I was in the library the whole time.", "truth": true },
+      { "name": "Ben", "statement": "I saw Charlie near the vase just before it broke.", "truth": false },
+      { "name": "Charlie", "statement": "Ben and I were together playing chess.", "truth": false }
+    ]
+  },
+  {
+    "level": 2,
+    "context": "Someone stole a lunchbox from the kitchen. Only three people had access.",
+    "characters": [
+      { "name": "Dina", "statement": "I don’t even like that kind of food.", "truth": true },
+      { "name": "Eli", "statement": "Frank was the last person I saw near the kitchen.", "truth": true },
+      { "name": "Frank", "statement": "Eli went in after me.", "truth": false }
+    ]
+  },
+  {
+    "level": 3,
+    "context": "A mysterious text message was sent from an unknown phone. The phone was found on a desk.",
+    "characters": [
+      { "name": "Gina", "statement": "I’ve never seen that phone before.", "truth": false },
+      { "name": "Hank", "statement": "I saw Gina pick something up from the desk.", "truth": true },
+      { "name": "Ivan", "statement": "I was in the garden all morning.", "truth": true }
+    ]
+  },
+  {
+    "level": 4,
+    "context": "The whiteboard marker went missing before the math class.",
+    "characters": [
+      { "name": "Jake", "statement": "I borrowed it yesterday and returned it.", "truth": false },
+      { "name": "Kira", "statement": "Liam was near the supply shelf just before the class.", "truth": true },
+      { "name": "Liam", "statement": "I wasn’t even in school today.", "truth": false }
+    ]
+  },
+  {
+    "level": 5,
+    "context": "During the fire drill, someone pulled the alarm without cause.",
+    "characters": [
+      { "name": "Maya", "statement": "Nina and I were together in the library.", "truth": false },
+      { "name": "Nina", "statement": "I was alone during the drill.", "truth": true },
+      { "name": "Oscar", "statement": "I saw Maya near the alarm panel.", "truth": true }
+    ]
+  },
+  {
+    "level": 6,
+    "context": "A painting in the hallway was found flipped upside down.",
+    "characters": [
+      { "name": "Pete", "statement": "I was taking photos in the hallway.", "truth": true },
+      { "name": "Quinn", "statement": "I fixed the painting when I saw it.", "truth": false },
+      { "name": "Rhea", "statement": "Pete knocked into it by mistake.", "truth": false }
+    ]
+  },
+  {
+    "level": 7,
+    "context": "A surprise party was ruined when someone leaked it.",
+    "characters": [
+      { "name": "Sam", "statement": "Tina and Uma were whispering yesterday.", "truth": true },
+      { "name": "Tina", "statement": "Uma told me she wouldn’t tell anyone.", "truth": true },
+      { "name": "Uma", "statement": "I never knew about the surprise party.", "truth": false }
+    ]
+  },
+  {
+    "level": 8,
+    "context": "A laptop in the lab was found with deleted project files.",
+    "characters": [
+      { "name": "Victor", "statement": "Wendy logged in last before the files were gone.", "truth": false },
+      { "name": "Wendy", "statement": "Xander borrowed my login info.", "truth": true },
+      { "name": "Xander", "statement": "I only used my own account.", "truth": false }
+    ]
+  },
+  {
+    "level": 9,
+    "context": "A classroom door was left unlocked overnight.",
+    "characters": [
+      { "name": "Yara", "statement": "Zane was supposed to check it before leaving.", "truth": true },
+      { "name": "Zane", "statement": "I checked all doors, including that one.", "truth": false },
+      { "name": "Aaron", "statement": "I saw Zane leave early.", "truth": true }
+    ]
+  },
+  {
+    "level": 10,
+    "context": "During recess, a basketball went missing.",
+    "characters": [
+      { "name": "Bella", "statement": "I saw Caleb put it back in the storage.", "truth": false },
+      { "name": "Caleb", "statement": "I left it on the bench.", "truth": true },
+      { "name": "Derek", "statement": "Bella took it after the game.", "truth": false }
+    ]
+  }
+]
