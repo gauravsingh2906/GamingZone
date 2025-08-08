@@ -11,9 +11,11 @@ data class SudokuState(
     val mistakes: Int = 0,
     val isGameOver: Boolean = false,
     val isGameWon: Boolean = false,
-    val elapsedTime: Int = 0,
+    var elapsedTime: Int = 0,
+    val isTimerRunning: Boolean = true,
     val difficulty: Difficulty? = Difficulty.EASY
 )
+
 
 
 

@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "GamingZone"
 include(":app")
+include(":auth")
  

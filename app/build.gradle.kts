@@ -22,6 +22,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("src/main/assets") // ✅ Must be present
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -44,7 +50,8 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.compose.animation:animation:1.6.0")
+    implementation("com.stevdza-san:sprite:1.0.6")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,6 +67,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("io.coil-kt:coil-compose:2.4.0") // or latest
+    implementation("io.coil-kt:coil-gif:2.4.0")     // if using GIFs or animated images
+
+
+    implementation("androidx.compose.ui:ui:1.6.0")
+    implementation("androidx.compose.foundation:foundation:1.6.0")
+
+    implementation("com.airbnb.android:lottie-compose:6.6.7")
 
     //compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -79,18 +94,25 @@ dependencies {
     //Cloudy for blurring effect
     implementation(libs.cloudy)
 
+
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha03") // or higher
+
+
     implementation("io.coil-kt:coil-svg:2.4.0")
     implementation("io.coil-kt:coil:2.4.0")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.32.0")
 
-    implementation("androidx.compose.foundation:foundation:1.6.0") // it now includes the indicator
+    // it now includes the indicator
 
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
+    implementation("com.google.code.gson:gson:2.10.1")
 
     //Paging
     implementation(libs.androidx.paging.runtime.ktx)

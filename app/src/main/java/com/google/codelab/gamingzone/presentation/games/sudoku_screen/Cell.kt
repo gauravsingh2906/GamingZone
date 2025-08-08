@@ -1,5 +1,7 @@
 package com.google.codelab.gamingzone.presentation.games.sudoku_screen
 
+import kotlinx.serialization.Serializable
+
 data class Cell(
     val row: Int,
     val col: Int,
@@ -12,7 +14,7 @@ data class Cell(
 
 
 
-
+@Serializable
 enum class Difficulty(val blanks: IntRange) {
     EASY(blanks = 36..40),
     MEDIUM(41..46),

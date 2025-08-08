@@ -42,11 +42,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
 @Composable
 fun SudokuScreen(
     state: SudokuState,
     onAction: (SudokuAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var showRestartDialog = remember { mutableStateOf(false) }
     Column(
@@ -60,7 +61,7 @@ fun SudokuScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Difficulty: ${state.difficulty?.name ?: "?"}",
+                text = "Difficulty: ${state.difficulty?.name}",
                 style = MaterialTheme.typography.labelLarge
             )
 
@@ -222,8 +223,6 @@ fun SudokuBoard(
                             )
                         }
                     }
-
-
                 }
             }
         }

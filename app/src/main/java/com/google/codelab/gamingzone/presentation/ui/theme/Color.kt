@@ -2,7 +2,7 @@ package com.google.codelab.gamingzone.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF126B56)
+val primaryLight = Color(0xFF076B5B)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFA3F2D7)
 val onPrimaryContainerLight = Color(0xFF005140)
@@ -79,3 +79,32 @@ val customBlue = Color(0xFF00DBDE)
 val customPink = Color(0xFFFC00FF)
 
 val customGreen = Color(0xFF1B5E20)
+
+val upperLeaderboard = Color(0xFF2A145C)
+
+// Light Theme
+val LightBackground = Color(0xFFF9F9FB)
+val LightActiveColor = Color(0xFF1976D2)     // Strong Blue
+val LightInactiveColor = Color(0xFF7C7C7C)   // Medium Gray
+
+// Dark Theme
+val DarkBackground = Color(0xFF1B1B1D)
+val DarkActiveColor = Color(0xFF64B5F6)      // Soft Light Blue
+val DarkInactiveColor = Color(0xFFB0BEC5)    // Light Gray
+
+
+
+// ✅ App Primary Colors
+val BluePrimary = Color(0xFF1976D2)     // Selected icon color (light theme)
+val BlueLight = Color(0xFF64B5F6)       // Selected icon color (dark theme)
+val GrayMedium = Color(0xFF7C7C7C)      // Unselected icons (light theme)
+val GrayLight = Color(0xFFB0BEC5)       // Unselected icons (dark theme)
+
+// ✅ Backgrounds
+val ightBackground = Color(0xFFF9F9FB) // Bottom bar light background
+val DarkBckground = Color(0xFF1B1B1D)  // Bottom bar dark background
+
+// Optional App-wide Colors
+val SuccessGreen = Color(0xFF4CAF50)
+val WarningOrange = Color(0xFFFFA726)
+val ErrorRed = Color(0xFFF44336)

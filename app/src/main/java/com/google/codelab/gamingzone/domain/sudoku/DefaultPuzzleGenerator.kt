@@ -11,6 +11,7 @@ class DefaultPuzzleGenerator @Inject constructor() : PuzzleGenerator {
         fillDiagonalBoxes(board)
         solve(board)
         val solutionBoard = board.map { it.copyOf().toList() }
+        Log.d("Solution", solutionBoard.toString())
         removeCells(board, difficulty)
         val puzzleBoard = board.map { it.toList() }
         return puzzleBoard to solutionBoard
@@ -99,6 +100,7 @@ class DefaultPuzzleGenerator @Inject constructor() : PuzzleGenerator {
         val attempts = difficulty.blanks.random()
         Log.d("Attempts", attempts.toString())
         Log.d("Attempts", difficulty.toString())
+       // Log.d("Attempts", Difficulty.valueOf(difficulty))
 
         val positions = mutableListOf<Pair<Int, Int>>()
         for (i in 0..8) {

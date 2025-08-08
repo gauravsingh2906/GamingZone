@@ -1,13 +1,12 @@
-package com.google.codelab.gamingzone.data.local.entity
+package com.google.codelab.gamingzone.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 
-@Entity(tableName = "user_profile")
-data class UserProfileEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long=0L,
+data class UserProfile(
+    val id: String = UUID.randomUUID().toString(),
     val username: String,
     val avatarId: Int,
     val level: Int=1,

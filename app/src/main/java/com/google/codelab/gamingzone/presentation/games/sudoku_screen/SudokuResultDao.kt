@@ -3,7 +3,7 @@ package com.google.codelab.gamingzone.presentation.games.sudoku_screen
 import androidx.room.*
 
 @Dao
-interface SudokuDao {
+interface SudokuResultDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertResult(result: SudokuResultEntity)

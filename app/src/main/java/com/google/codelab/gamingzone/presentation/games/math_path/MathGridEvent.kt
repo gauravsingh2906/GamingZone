@@ -1,8 +1,10 @@
 package com.google.codelab.gamingzone.presentation.games.math_path
 
-sealed class MathPathEvent {
-    data class TileTapped(val tile: MathTile) : MathPathEvent()
-    object Submit : MathPathEvent()
-    object Reset : MathPathEvent()
-    object Tick : MathPathEvent()
+sealed class MathGridEvent {
+    data class SelectTile(val tile: MathTile) : MathGridEvent()
+    object SubmitSelection : MathGridEvent()
+    object RestartGame : MathGridEvent()
+//    object ShuffleGrid : MathGridEvent()
+    object NextLevel : MathGridEvent()
+    object GameOver : MathGridEvent()
 }

@@ -1,9 +1,10 @@
 package com.google.codelab.gamingzone.presentation.home_screen
 
+
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import com.google.codelab.gamingzone.R
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +21,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,17 +47,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.codelab.gamingzone.domain.model.GameItem
+import com.google.codelab.gamingzone.FontSize
+import com.google.codelab.gamingzone.RobotoCondensedFont
 import com.google.codelab.gamingzone.domain.model.GameCategory
-import com.google.codelab.gamingzone.presentation.home_screen.SampleGames.generateDailyChallenge
+import com.google.codelab.gamingzone.domain.model.GameItem
 import com.google.codelab.gamingzone.presentation.home_screen.components.GamingZoneTopAppBar
-
-
-import androidx.compose.animation.*
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -65,24 +68,17 @@ fun HomeScreen(
 ) {
     var showImagePreview = remember { mutableStateOf(false) }
     var activeImage = remember { mutableStateOf<GameItem?>(null) }
-    val dailyChallenge = remember { generateDailyChallenge() }
+  //  val dailyChallenge = remember { generateDailyChallenge() }
 
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(R.drawable.home_background_image),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+
 
         Column(
             modifier = Modifier.fillMaxSize()
         )
         {
-
-
             GamingZoneTopAppBar(
                 scrollBehaviour = scrollBehavior,
                 onSearchClick = { }
@@ -147,7 +143,9 @@ fun GameCard(
                     onDragStart = { onImageDragStart(game) },
                     onDragCancel = { onImageDragEnd() },
                     onDragEnd = { onImageDragEnd() },
-                    onDrag = { _, _ -> }
+                    onDrag = { _, _ ->
+
+                    }
                 )
             },
         shape = RoundedCornerShape(16.dp),
@@ -157,31 +155,47 @@ fun GameCard(
         )
     ) {
 
-        Column() {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             AsyncImage(
                 model = game.coverImageUrl,
                 contentDescription = game.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = game.name.toString(),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                fontSize = FontSize.EXTRA_REGULAR,
+                fontFamily = RobotoCondensedFont(),
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 12.dp)
             )
             Text(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp),
+                fontSize = FontSize.SMALL,
                 text = game.category?.name?.lowercase()!!.replaceFirstChar { it.uppercase() },
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
+            Spacer(modifier = Modifier.height(28.dp))
         }
 
     }
 
 }
 
+
+val categoryIcons = mapOf(
+    null to Icons.Default.AccountCircle,
+    GameCategory.SKILL to Icons.Default.AccountBox,
+    GameCategory.FUN to Icons.Default.Face,
+    GameCategory.PUZZLE to Icons.Default.Star,
+    GameCategory.REFLEX to Icons.Default.CheckCircle,
+    GameCategory.LOGIC to Icons.Default.Email
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,18 +204,41 @@ fun GameCategoryFilter(
     onCategorySelected: (GameCategory?) -> Unit,
     scrollBehaviour: TopAppBarScrollBehavior
 ) {
-    val categories = listOf(null) + GameCategory.entries.toTypedArray()
-    LazyRow {
-        items(categories) { category ->
+    val categories = listOf(null)+GameCategory.values().toList()
+    //  val categories = listOf(null) + GameCategory.entries.toTypedArray()
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 0.dp, horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(categories.size) { index ->
+            val category = categories[index]
             val isSelected = category == selectedCategory
 
             val label = category?.name ?: "All"
             FilterChip(
-                selected = isSelected,
+                selected = selectedCategory == category,
                 onClick = {
-                    onCategorySelected(category)
+                    onCategorySelected(if (selectedCategory == category) null else category)
                 },
-                label = { Text(label, color = Color.Black) },
+                leadingIcon = {
+                    val icon = categoryIcons[category] ?: Icons.Default.AccountBox
+
+                    if (true) {
+                        androidx.compose.material3.Icon(
+                            imageVector = icon,
+                            contentDescription = null
+                        )
+                    }
+                },
+                label = {
+                    Text(
+                        text = category?.name
+                            ?.lowercase()
+                            ?.replaceFirstChar { it.uppercase() } ?: "All"
+                    )
+                },
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
@@ -272,56 +309,5 @@ fun DailyChallengeCardAnimated(
 }
 
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun Preview(modifier: Modifier = Modifier) {
-//
-//    val sampleGames = listOf(
-//        GameItem(
-//            id = "sudoku",
-//            name = "Sudoku",
-//            category = GameCategory.LOGIC,
-//            description = "Use logic to place numbers from 1-9 into each cell of a 9×9 grid.",
-//            coverImageUrl = "https://upload.wikimedia.org/wikipedia/commons/9/92/Sudoku_Puzzle_%28a_puzzle_with_total_symmetry%29.png",
-//            tutorialImageUrls = listOf(
-//                "https://cdn.pixabay.com/photo/2015/08/02/17/20/sudoku-872218_960_720.jpg",
-//                "https://cdn.pixabay.com/photo/2017/01/10/15/36/sudoku-1963928_960_720.jpg",
-//                "https://cdn.pixabay.com/photo/2017/01/10/15/39/sudoku-1963931_960_720.jpg"
-//            ),
-//            difficultyLevels = listOf("Easy", "Medium", "Hard"),
-//            gameImageUrls = listOf(
-//                "https://example.com/sudoku_game1.jpg",
-//                "https://example.com/sudoku_game2.jpg"
-//            ),
-//            screenRoute = ""
-//        ),GameItem(
-//            id = "colorracescreen",
-//            name = "ColorRaceScreen",
-//            category = GameCategory.SKILL,
-//            description = "Use logic to place numbers from 1-9 into each cell of a 9×9 grid.",
-//            coverImageUrl = "https://upload.wikimedia.org/wikipedia/commons/9/92/Sudoku_Puzzle_%28a_puzzle_with_total_symmetry%29.png",
-//            tutorialImageUrls = listOf(
-//                "https://example.com/sudoku_tut1.jpg",
-//                "https://example.com/sudoku_tut2.jpg",
-//                "https://example.com/sudoku_tut3.jpg",
-//                "https://example.com/sudoku_tut4.jpg"
-//            ),
-//            difficultyLevels = listOf("Easy", "Medium", "Hard"),
-//            gameImageUrls = listOf(
-//                "https://example.com/sudoku_game1.jpg",
-//                "https://example.com/sudoku_game2.jpg"
-//            ),
-//            screenRoute = ""
-//        )
-//    )
-//
-//    HomeScreen(
-//        games = sampleGames,
-//        selectedCategory = null,
-//        onCategorySelected = {},
-//        onGameClick = {},
-//        )
-//
-//}
 
 

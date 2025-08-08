@@ -1,5 +1,6 @@
 package com.google.codelab.gamingzone.presentation.games.sudoku_screen
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.codelab.gamingzone.domain.model.GameItem
 import com.google.codelab.gamingzone.domain.sudoku.PuzzleGenerator
+import com.google.codelab.gamingzone.presentation.games.trap_bot.DifficultyLevel
 import com.google.codelab.gamingzone.presentation.home_screen.SampleGames.sampleGames
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -21,11 +23,11 @@ import kotlin.collections.all
 @HiltViewModel
 class SudokuViewModel @Inject constructor(
     private val generator: PuzzleGenerator,
+    private val dao: SudokuResultDao,
     savedStateHandle: SavedStateHandle// No longer DefaultPuzzleGenerator directly
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(SudokuState())
-
+    private val _state = mutableStateOf(SudokuState(isTimerRunning = true))
     val state: State<SudokuState> = _state
 
     private val _event = MutableSharedFlow<SudokuGameEvent>()
@@ -39,16 +41,29 @@ class SudokuViewModel @Inject constructor(
         return games.find { it.id == id }
     }
 
+    private var difficulty: Difficulty = Difficulty.EASY // default
+
+
     init {
         val difficultyArg = savedStateHandle.get<String>("difficulty")
-        val difficulty = difficultyArg?.let {
-            Difficulty.valueOf(it)
-        } ?: Difficulty.EASY // fallback
+        difficulty = try {
+            Difficulty.valueOf(difficultyArg ?: Difficulty.EASY.name)
+        } catch (e: IllegalArgumentException) {
+            Difficulty.EASY
+        }
 
         _state.value = _state.value.copy(difficulty = difficulty)
-        generatePuzzle()
+
+        generatePuzzle(difficulty)
         startTimer()
     }
+
+    val xpEarned = when (difficulty) {
+        Difficulty.EASY -> if (state.value.isGameWon) 20 else 5
+        Difficulty.MEDIUM -> if (state.value.isGameWon) 35 else 10
+        Difficulty.HARD -> if (state.value.isGameWon) 50 else 15
+    }
+
 
     fun onAction(action: SudokuAction) {
         when (action) {
@@ -64,7 +79,10 @@ class SudokuViewModel @Inject constructor(
                 val boardCopy = state.value.board.map { it.toMutableList() }
                 boardCopy[row][col] = Cell(row, col, action.number, false)
 
-                val invalid = !isValidMove(boardCopy, row, col, action.number)
+                val correctValue = state.value.solutionBoard[row][col].value
+                val invalid = action.number != correctValue
+
+                //    val invalid = !isValidMove(boardCopy, row, col, action.number)
                 val newMistakes = state.value.mistakes + if (invalid) 1 else 0
 
                 _state.value = state.value.copy(
@@ -78,10 +96,30 @@ class SudokuViewModel @Inject constructor(
                 )
 
                 if (newMistakes >= 3) {
-                    viewModelScope.launch { _event.emit(SudokuGameEvent.GameOver) }
+                    _state.value = state.value.copy(
+                        mistakes = newMistakes,
+                        isTimerRunning = false,
+                        board = boardCopy
+                    )
+                    _state.value = _state.value.copy(
+                        isGameOver = true,
+                        isTimerRunning = false
+                    )
+                    viewModelScope.launch {
+                        delay(500) // Let UI update mistake before showing dialog
+                        saveSudokuResult()
+                        _event.emit(SudokuGameEvent.GameOver)
+                    }
+                    return
                 } else if (isPuzzleSolved(boardCopy)) {
-                    _state.value = state.value.copy(isGameWon = true)
-                    viewModelScope.launch { _event.emit(SudokuGameEvent.PuzzleSolved) }
+                    _state.value = _state.value.copy(
+                        isGameWon = true,
+                        isTimerRunning = false
+                    )
+                    viewModelScope.launch {
+                        saveSudokuResult()
+                        _event.emit(SudokuGameEvent.PuzzleSolved)
+                    }
                 }
             }
 
@@ -113,37 +151,71 @@ class SudokuViewModel @Inject constructor(
                             }
                         }
                     }
-           viewModelScope.launch {
-               _state.value = currentState.copy(
-                   board = updatedBoard,
-                   hintsUsed = currentState.hintsUsed + 1
-               )
-               delay(1000L) // Hint highlight shows for 1 second
+                    viewModelScope.launch {
+                        _state.value = currentState.copy(
+                            board = updatedBoard,
+                            hintsUsed = currentState.hintsUsed + 1
+                        )
+                        delay(1000L) // Hint highlight shows for 1 second
 
-               val resetBoard = updatedBoard.map { row ->
-                   row.map { it.copy(isHint = false) }
-               }
+                        val resetBoard = updatedBoard.map { row ->
+                            row.map { it.copy(isHint = false) }
+                        }
 
-               _state.value = _state.value.copy(board = resetBoard)
-           }
+                        _state.value = _state.value.copy(board = resetBoard)
+                    }
+                }
 
+                val boardCopy = state.value.board.map { it.toMutableList() }
+
+                if (isPuzzleSolved(boardCopy)) {
+                    _state.value = _state.value.copy(
+                        isGameWon = true,
+                        isTimerRunning = false
+                    )
+                    viewModelScope.launch {
+                        saveSudokuResult()
+                        _event.emit(SudokuGameEvent.PuzzleSolved)
+                    }
                 }
             }
 
-            SudokuAction.RestartGame ->{
-                generatePuzzle()
+            SudokuAction.RestartGame -> {
+                generatePuzzle(difficulty)
             }
 
-            is SudokuAction.ChangeDifficulty -> {
+            is SudokuAction.SetDifficulty -> {
                 _state.value = _state.value.copy(difficulty = action.difficulty)
-                generatePuzzle()
             }
         }
-
     }
 
-    fun generatePuzzle() {
-        val (puzzle,solution) = generator.generate(_state.value.difficulty!!)
+
+    private suspend fun saveSudokuResult() {
+        val currentState = _state.value
+
+        val puzzleString =
+            currentState.originalBoard.flatten().joinToString("") { it.value.toString() }
+        val userSolutionString =
+            currentState.board.flatten().joinToString("") { it.value.toString() }
+
+        val result = SudokuResultEntity(
+            difficulty = currentState.difficulty!!.name,
+            puzzle = puzzleString,
+            userSolution = userSolutionString,
+            hintsUsed = currentState.hintsUsed,
+            mistakesMade = currentState.mistakes,
+            timeTakenSeconds = currentState.elapsedTime
+        )
+
+        _state.value.elapsedTime = currentState.elapsedTime
+
+        dao.insertResult(result)
+    }
+
+
+    fun generatePuzzle(difficulty: Difficulty) {
+        val (puzzle, solution) = generator.generate(difficulty)
         val cells = puzzle.mapIndexed { row, list ->
             list.mapIndexed { col, value ->
                 Cell(
@@ -159,6 +231,8 @@ class SudokuViewModel @Inject constructor(
                 )
             }
         }
+
+        Log.d("sol", solutionBoard.toString())
 
         _state.value = SudokuState(
             board = cells,
@@ -177,14 +251,19 @@ class SudokuViewModel @Inject constructor(
     }
 
     private fun startTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (isActive) {
-                delay(1000L)
-                _state.value = _state.value.copy(elapsedTime = _state.value.elapsedTime + 1)
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                val currentState = _state.value
+                if (currentState.isTimerRunning) {
+                    _state.value = currentState.copy(elapsedTime = currentState.elapsedTime + 1)
+                } else {
+                    break // Stop loop when timer stops
+                }
             }
         }
     }
+
 
     private fun isValidMove(board: List<List<Cell>>, row: Int, col: Int, num: Int): Boolean {
         for (i in 0 until 9) {
@@ -203,12 +282,20 @@ class SudokuViewModel @Inject constructor(
         return true
     }
 
+//    private fun isPuzzleSolved(board: List<List<Cell>>): Boolean {
+//        return board.all { row -> row.all { it.value != 0 } } &&
+//                board.flatten().none { (row, col) ->
+//                    !isValidMove(board, row, col, board[row][col].value)
+//                }
+//    }
+
     private fun isPuzzleSolved(board: List<List<Cell>>): Boolean {
-        return board.all { row -> row.all { it.value != 0 } } &&
-                board.flatten().none { (row, col) ->
-                    !isValidMove(board, row, col, board[row][col].value)
-                }
+        val solution = state.value.solutionBoard
+        return board.flatten().all { cell ->
+            cell.value == solution[cell.row][cell.col].value
+        }
     }
+
 
     override fun onCleared() {
         super.onCleared()
