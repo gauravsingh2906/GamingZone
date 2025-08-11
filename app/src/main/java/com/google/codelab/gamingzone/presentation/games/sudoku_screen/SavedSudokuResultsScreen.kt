@@ -118,6 +118,7 @@ fun SudokuResultItem(result: SudokuResultEntity) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 Text("Difficulty: ${result.difficulty}", fontWeight = FontWeight.Bold)
                 Text("⏱ ${formatTime(result.timeTakenSeconds)}")
+                Text("Xp Earned ${result.xpEarned}")
             }
 
             Spacer(modifier = Modifier.height(4.dp))

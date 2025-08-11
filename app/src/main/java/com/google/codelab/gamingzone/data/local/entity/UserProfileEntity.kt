@@ -20,5 +20,5 @@ data class UserProfileEntity(
     val highestScore: Int = 0,
     val totalPlayTimeInMinutes: Int = 0,
     val renameTickets: Int = 1,
-    val gameStats: Map<String, GameStats> = emptyMap()
+    val gameStats:Map<String, GameStats> = emptyMap()
 )

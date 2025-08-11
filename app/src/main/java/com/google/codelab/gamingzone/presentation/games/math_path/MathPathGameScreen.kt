@@ -35,8 +35,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameMode
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.Difficulty
+import com.google.codelab.gamingzone.presentation.profile_screen.UserStatsViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -83,7 +85,8 @@ fun ConfettiAnimation() {
 fun MathPathLevelUI(
     state: MathPathState,
     onAction: (MathGridEvent) -> Unit,
-    navigateToGameOverScreen: () -> Unit
+    navigateToGameOverScreen: () -> Unit,
+    profileViewModel: UserStatsViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
@@ -112,6 +115,12 @@ fun MathPathLevelUI(
 
         val showLoseDialog = remember { mutableStateOf(false) }
         if (state.isGameOver) {
+            profileViewModel.recordGameResult(
+                gameName = "mathpath",
+                isWin = false,
+                isDraw = false,
+                xpEarned = if (state.level<10) 10 else 30
+            )
             Spacer(Modifier.height(16.dp))
             AlertDialog(
                 onDismissRequest = { },
@@ -134,6 +143,12 @@ fun MathPathLevelUI(
             )
             Text("Level Complete! 🎉")
             Button(onClick = { onAction(MathGridEvent.NextLevel) }) {
+                profileViewModel.recordGameResult(
+                    gameName = "mathpath",
+                    isWin = true,
+                    isDraw = false,
+                    xpEarned = if (state.level<10) 10 else 30
+                )
                 Text("Next Level")
             }
         }

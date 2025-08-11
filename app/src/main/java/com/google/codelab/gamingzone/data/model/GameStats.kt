@@ -1,7 +1,7 @@
 package com.google.codelab.gamingzone.data.model
 
 data class GameStats(
-    val gameName: String,
+    val gameName: String="gamers",
     val gamesPlayed: Int=0,
     val wins: Int=0,
     val losses: Int=0,

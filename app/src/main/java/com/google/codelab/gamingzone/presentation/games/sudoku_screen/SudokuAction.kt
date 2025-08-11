@@ -5,7 +5,7 @@ sealed class SudokuAction {
     data class EnterNumber(val number: Int) : SudokuAction()
     object UseHint : SudokuAction()
     object RestartGame : SudokuAction()
-    data class SetDifficulty(val difficulty: Difficulty) : SudokuAction()
+ //   data class SetDifficulty(val difficulty: Difficulty) : SudokuAction()
 }
 
 

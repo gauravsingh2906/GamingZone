@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class SudokuResultEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val difficulty: String,
+    val xpEarned:Int,
     val puzzle: String,         // Original puzzle grid
     val userSolution: String,      // User's final solution
     val hintsUsed: Int,         // Total hints used

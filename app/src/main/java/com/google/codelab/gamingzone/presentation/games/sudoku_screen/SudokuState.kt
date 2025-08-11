@@ -8,6 +8,7 @@ data class SudokuState(
     val selectedNumber: Int? = null,
     val invalidCells: Set<Pair<Int, Int>> = emptySet(),
     val hintsUsed: Int=0,
+    val xpEarned:Int=0,
     val mistakes: Int = 0,
     val isGameOver: Boolean = false,
     val isGameWon: Boolean = false,

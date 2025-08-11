@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
+
 @Composable
 fun SudokuScreen(
     state: SudokuState,
@@ -50,6 +51,8 @@ fun SudokuScreen(
     modifier: Modifier = Modifier,
 ) {
     var showRestartDialog = remember { mutableStateOf(false) }
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -73,7 +76,7 @@ fun SudokuScreen(
             Text(
                 text = "Mistakes: ${state.mistakes}/3",
                 style = MaterialTheme.typography.labelLarge,
-                color = if (state.mistakes >= 3) Color.Red else Color.Unspecified
+                color = if (state.mistakes == 3) Color.Red else Color.Unspecified
             )
 
             IconButton(onClick = { showRestartDialog.value = true }) {

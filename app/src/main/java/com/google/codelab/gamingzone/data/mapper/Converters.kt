@@ -16,7 +16,15 @@ class Converters {
     private val gson = Gson()
     private val type = object : TypeToken<Map<String, GameStats>>(){}.type
 
+    @TypeConverter
+    fun fromGameStatsMap(value: Map<String, GameStats>?): String {
+        return gson.toJson(value, type)
+    }
 
+    @TypeConverter
+    fun toGameStatsMap(value: String): Map<String, GameStats>? {
+        return gson.fromJson(value, type)
+    }
 
 
 }

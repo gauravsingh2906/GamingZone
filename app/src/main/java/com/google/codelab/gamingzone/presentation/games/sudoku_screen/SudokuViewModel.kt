@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.codelab.gamingzone.data.local.dao.UserProfileDao
 import com.google.codelab.gamingzone.data.local.entity.UserProfileEntity
 import com.google.codelab.gamingzone.data.model.GameResult
 import com.google.codelab.gamingzone.data.model.GameStats
@@ -47,6 +48,8 @@ class SudokuViewModel @Inject constructor(
 
     private var difficulty: Difficulty = Difficulty.EASY // default
 
+  //  var xpEarned: Int = 0
+
 
     init {
         val difficultyArg = savedStateHandle.get<String>("difficulty")
@@ -60,12 +63,6 @@ class SudokuViewModel @Inject constructor(
 
         generatePuzzle(difficulty)
         startTimer()
-    }
-
-    val xpEarned = when (difficulty) {
-        Difficulty.EASY -> if (state.value.isGameWon) 20 else 5
-        Difficulty.MEDIUM -> if (state.value.isGameWon) 35 else 10
-        Difficulty.HARD -> if (state.value.isGameWon) 50 else 15
     }
 
 
@@ -96,14 +93,17 @@ class SudokuViewModel @Inject constructor(
                         state.value.invalidCells + (row to col)
                     else
                         state.value.invalidCells - (row to col),
-                    isGameOver = newMistakes >= 3
+                    isGameOver = newMistakes == 3
                 )
 
-                if (newMistakes >= 3) {
+                if (newMistakes == 3) {
                     _state.value = state.value.copy(
                         mistakes = newMistakes,
                         isTimerRunning = false,
-                        board = boardCopy
+                        board = boardCopy,
+                        xpEarned = if (difficulty == Difficulty.EASY) 5
+                        else if (difficulty == Difficulty.MEDIUM) 10
+                        else 15
                     )
                     _state.value = _state.value.copy(
                         isGameOver = true,
@@ -111,6 +111,29 @@ class SudokuViewModel @Inject constructor(
                     )
                     viewModelScope.launch {
                         delay(500) // Let UI update mistake before showing dialog
+//                        xpEarned = when (difficulty) {
+//                            Difficulty.EASY -> if (_state.value.isGameWon) 20 else 5
+//                            Difficulty.MEDIUM -> if (_state.value.isGameWon) 35 else 10
+//                            Difficulty.HARD -> if (_state.value.isGameWon) 50 else 15
+//                        }
+                        // the upcoming code is important
+//                        val currentUser = userProfileRepository.getProfile()
+//                        Log.d("All", "Profile $currentUser")
+//                        if (currentUser != null) {
+//                            val updatedProfile = updateAfterGame(
+//                                currentUser = currentUser,
+//                                result = GameResult(
+//                                    gameName = "sudoku",
+//                                    difficulty = difficulty,
+//                                    isWin = false,
+//                                    isDraw = false,
+//                                    xpEarned = xpEarned
+//                                )
+//                            )
+//                            Log.d("All", "Updated Profile $currentUser")
+//                            userProfileRepository.updateProfile(updatedProfile) // <-- THIS IS THE SAVE
+//                        }
+
                         saveSudokuResult()
                         _event.emit(SudokuGameEvent.GameOver)
                     }
@@ -118,9 +141,34 @@ class SudokuViewModel @Inject constructor(
                 } else if (isPuzzleSolved(boardCopy)) {
                     _state.value = _state.value.copy(
                         isGameWon = true,
-                        isTimerRunning = false
+                        isTimerRunning = false,
+                        xpEarned =  when (difficulty) {
+                            Difficulty.EASY ->  20
+                            Difficulty.MEDIUM ->  35
+                            Difficulty.HARD ->  50
+                        }
                     )
                     viewModelScope.launch {
+//                        xpEarned = when (difficulty) {
+//                            Difficulty.EASY -> if (_state.value.isGameWon) 20 else 5
+//                            Difficulty.MEDIUM -> if (_state.value.isGameWon) 35 else 10
+//                            Difficulty.HARD -> if (_state.value.isGameWon) 50 else 15
+//                        }
+//                        val currentUser = userProfileRepository.getProfile()
+//                        if (currentUser != null) {
+//                            val updatedProfile = updateAfterGame(
+//                                currentUser = currentUser,
+//                                result = GameResult(
+//                                    gameName = "sudoku",
+//                                    difficulty = difficulty,
+//                                    isWin = true,
+//                                    isDraw = false,
+//                                    xpEarned = xpEarned
+//                                )
+//                            )
+//                            userProfileRepository.updateProfile(updatedProfile) // <-- THIS IS THE SAVE
+//                        }
+
                         saveSudokuResult()
                         _event.emit(SudokuGameEvent.PuzzleSolved)
                     }
@@ -146,10 +194,7 @@ class SudokuViewModel @Inject constructor(
                     val updatedBoard = currentBoard.map { row ->
                         row.map { cell ->
                             if (cell.row == hintCell.row && cell.col == hintCell.col) {
-                                cell.copy(
-                                    value = correctValue,
-                                    isHint = true
-                                )
+                                cell.copy(value = correctValue, isHint = true)
                             } else {
                                 cell
                             }
@@ -175,31 +220,44 @@ class SudokuViewModel @Inject constructor(
                 if (isPuzzleSolved(boardCopy)) {
                     _state.value = _state.value.copy(
                         isGameWon = true,
-                        isTimerRunning = false
+                        isTimerRunning = false,
+                        xpEarned = when (difficulty) {
+                            Difficulty.EASY ->  20
+                            Difficulty.MEDIUM ->  35
+                            Difficulty.HARD ->  50
+                        }
                     )
+
+
+                    val xpEarned = when (difficulty) {
+                        Difficulty.EASY -> if (_state.value.isGameWon) 20 else 5
+                        Difficulty.MEDIUM -> if (_state.value.isGameWon) 35 else 10
+                        Difficulty.HARD -> if (_state.value.isGameWon) 50 else 15
+                    }
                     viewModelScope.launch {
-                        updateAfterGame(
-                            currentUser = UserProfileEntity(
-                                currentXP = 34,
-                                xpToNextLevel = 54,
-                                gamesPlayed = 43,
-                                highestScore = 43,
-                                totalPlayTimeInMinutes = 23,
-                                renameTickets = 1,
-                                username = "Guarav",
-                                avatarId = 1
-                            ),
-                            result= GameResult(
-                                gameName = "sudoku",
-                                difficulty = difficulty,
-                                isWin = true,
-                                isDraw = false,
-                                xpEarned = xpEarned
-                            )
-                        )
+//                        updateAfterGame(
+//                            currentUser = UserProfileEntity(
+//                                currentXP = 34,
+//                                xpToNextLevel = 54,
+//                                gamesPlayed = 43,
+//                                highestScore = 43,
+//                                totalPlayTimeInMinutes = 23,
+//                                renameTickets = 1,
+//                                username = "Gaurav",
+//                                avatarId = 1
+//                            ),
+//                            result = GameResult(
+//                                gameName = "sudoku",
+//                                difficulty = difficulty,
+//                                isWin = true,
+//                                isDraw = false,
+//                                xpEarned = xpEarned
+//                            )
+//                        )
                         saveSudokuResult()
                         _event.emit(SudokuGameEvent.PuzzleSolved)
                     }
+
                 }
             }
 
@@ -207,9 +265,9 @@ class SudokuViewModel @Inject constructor(
                 generatePuzzle(difficulty)
             }
 
-            is SudokuAction.SetDifficulty -> {
-                _state.value = _state.value.copy(difficulty = action.difficulty)
-            }
+//            is SudokuAction.SetDifficulty -> {
+//                _state.value = _state.value.copy(difficulty = action.difficulty)
+//            }
         }
     }
 
@@ -228,7 +286,8 @@ class SudokuViewModel @Inject constructor(
             userSolution = userSolutionString,
             hintsUsed = currentState.hintsUsed,
             mistakesMade = currentState.mistakes,
-            timeTakenSeconds = currentState.elapsedTime
+            timeTakenSeconds = currentState.elapsedTime,
+            xpEarned = currentState.xpEarned,
         )
 
         _state.value.elapsedTime = currentState.elapsedTime
@@ -241,9 +300,7 @@ class SudokuViewModel @Inject constructor(
         val (puzzle, solution) = generator.generate(difficulty)
         val cells = puzzle.mapIndexed { row, list ->
             list.mapIndexed { col, value ->
-                Cell(
-                    row, col, value, value != 0,
-                )
+                Cell(row, col, value, value != 0,)
             }
         }
 
@@ -317,8 +374,8 @@ class SudokuViewModel @Inject constructor(
         result: GameResult
     ): UserProfileEntity {
 
-        val newTotalGames = currentUser.gamesPlayed +1
-        val newXp= currentUser.currentXP+result.xpEarned
+        val newTotalGames = currentUser.gamesPlayed + 1
+        val newXp = currentUser.currentXP + result.xpEarned
         var newLevel = currentUser.level
         var newXpToNewLevel = currentUser.xpToNextLevel
         var remainingXp = newXp
@@ -326,7 +383,7 @@ class SudokuViewModel @Inject constructor(
         while (remainingXp >= newXpToNewLevel) {
             remainingXp -= newXpToNewLevel
             newLevel++
-            newXpToNewLevel +=50
+            newXpToNewLevel += 50
         }
 
         val finalXp = remainingXp
@@ -334,18 +391,29 @@ class SudokuViewModel @Inject constructor(
         val currentGameStats = currentUser.gameStats[result.gameName]
 
         val updatedGameStats = currentGameStats?.copy(
-            gamesPlayed = currentGameStats.gamesPlayed+1,
-            wins = if (result.isWin==true) currentGameStats.wins+1 else currentGameStats.wins,
-            losses = if (result.isWin==false) currentGameStats.losses+1 else currentGameStats.losses,
-            totalDraws = if (result.isDraw) currentGameStats.totalDraws+1 else currentGameStats.totalDraws,
-            easyGamesPlayed = if (result.difficulty == Difficulty.EASY) currentGameStats.easyGamesPlayed+1 else currentGameStats.easyGamesPlayed,
-            mediumGamesPlayed = if (result.difficulty == Difficulty.MEDIUM) currentGameStats.mediumGamesPlayed+1 else currentGameStats.mediumGamesPlayed,
-            hardGamesPlayed = if (result.difficulty == Difficulty.HARD) currentGameStats.hardGamesPlayed+1 else currentGameStats.hardGamesPlayed
+            gamesPlayed = currentGameStats.gamesPlayed + 1,
+            wins = if (result.isWin == true) currentGameStats.wins + 1 else currentGameStats.wins,
+            losses = if (result.isWin == false) currentGameStats.losses + 1 else currentGameStats.losses,
+            totalDraws = if (result.isDraw) currentGameStats.totalDraws + 1 else currentGameStats.totalDraws,
+            xpEarned = newXp,
+            easyGamesPlayed = if (result.difficulty == Difficulty.EASY) currentGameStats.easyGamesPlayed + 1 else currentGameStats.easyGamesPlayed,
+            mediumGamesPlayed = if (result.difficulty == Difficulty.MEDIUM) currentGameStats.mediumGamesPlayed + 1 else currentGameStats.mediumGamesPlayed,
+            hardGamesPlayed = if (result.difficulty == Difficulty.HARD) currentGameStats.hardGamesPlayed + 1 else currentGameStats.hardGamesPlayed
+        ) ?: GameStats( // if game has no stats yet
+            gameName = result.gameName,
+            gamesPlayed = 1,
+            wins = if (result.isWin == true) 1 else 0,
+            losses = if (result.isWin == false) 1 else 0,
+            totalDraws = if (result.isDraw) 1 else 0,
+            easyGamesPlayed = if (result.difficulty == Difficulty.EASY) 1 else 0,
+            mediumGamesPlayed = if (result.difficulty == Difficulty.MEDIUM) 1 else 0,
+            hardGamesPlayed = if (result.difficulty == Difficulty.HARD) 1 else 0
         )
 
         val updatedGameStatsMap = currentUser.gameStats.toMutableMap()
 
-        updatedGameStatsMap[result.gameName] == updatedGameStats
+        updatedGameStatsMap[result.gameName] = updatedGameStats
+
 
         return currentUser.copy(
             gamesPlayed = newTotalGames,
@@ -353,7 +421,6 @@ class SudokuViewModel @Inject constructor(
             level = newLevel,
             gameStats = updatedGameStatsMap
         )
-
 
 
     }

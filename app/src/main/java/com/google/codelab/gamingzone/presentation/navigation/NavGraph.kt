@@ -23,43 +23,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.codelab.gamingzone.SplashScreen
-import com.google.codelab.gamingzone.presentation.feature_code_runner.CodeRunnerScreen
+import com.google.codelab.gamingzone.data.model.GameResult
 import com.google.codelab.gamingzone.presentation.game_detail_screen.DifficultySelectionScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameDetailScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameMode
-import com.google.codelab.gamingzone.presentation.games.SortColorsGame
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessScreen
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessViewModel
 import com.google.codelab.gamingzone.presentation.games.color_race_screen2.ColorRaceScreen
 import com.google.codelab.gamingzone.presentation.games.color_race_screen2.ColorRaceViewModel
-import com.google.codelab.gamingzone.presentation.games.fear_zone.FearZoneScreen
-import com.google.codelab.gamingzone.presentation.games.logic_puzzle.LogicPuzzleScreen
-import com.google.codelab.gamingzone.presentation.games.masyu_puzzle_japan.SymbolLogicGrid
 import com.google.codelab.gamingzone.presentation.games.math_memory.MathMemoryMixScreen
-
-
 import com.google.codelab.gamingzone.presentation.games.math_path.DifficultyMath
 import com.google.codelab.gamingzone.presentation.games.math_path.MathPathGameScreen
 import com.google.codelab.gamingzone.presentation.games.math_path.MathPathViewModel
-import com.google.codelab.gamingzone.presentation.games.math_trap_dungeon.MathTrapDungeonScreen
-import com.google.codelab.gamingzone.presentation.games.maze_puzzle.MazeGameScreen
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.Difficulty
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.SavedSudokuResultsScreen
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.SudokuGameEvent
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.SudokuScreen
 import com.google.codelab.gamingzone.presentation.games.sudoku_screen.SudokuViewModel
-import com.google.codelab.gamingzone.presentation.games.sudoku_screen.formatTime
 import com.google.codelab.gamingzone.presentation.games.trap_bot.DifficultyLevel
 import com.google.codelab.gamingzone.presentation.games.trap_bot.TrapTheBotScreen
 import com.google.codelab.gamingzone.presentation.games.trap_bot.TrapTheBotViewModel
 import com.google.codelab.gamingzone.presentation.home_screen.HomeScreen
 import com.google.codelab.gamingzone.presentation.home_screen.HomeViewModel
-import com.google.codelab.gamingzone.presentation.leaderboard_screen.MindRiseHomeScreen
 import com.google.codelab.gamingzone.presentation.navigation.Routes.ColorRaceScreen
 import com.google.codelab.gamingzone.presentation.navigation.Routes.ProfileScreen
-import com.google.codelab.gamingzone.presentation.profile_screen.ProfileScreen
 import com.google.codelab.gamingzone.presentation.profile_screen.ProfileScreener
-import com.google.codelab.gamingzone.presentation.profile_screen.UserProfileViewModel
+
+import com.google.codelab.gamingzone.presentation.profile_screen.UserStatsViewModel
 import com.google.codelab.gamingzone.tobe.TubeScreen
 import com.google.codelab.gamingzone.tobe.TubeViewModel
 
@@ -90,6 +80,7 @@ fun NavGraph(
         composable<Routes.HomeScreen> {
 
             val viewModel: HomeViewModel = hiltViewModel()
+
             val games = viewModel.games.value
             val selectedCategory = viewModel.selectedCategory.value
 
@@ -172,7 +163,7 @@ fun NavGraph(
                         }
                     } else if (gameItem.id == "color") {
                         navController.navigate(ColorRaceScreen)
-                    } else if (gameItem.id =="math_memory") {
+                    } else if (gameItem.id == "math_memory") {
                         navController.navigate(Routes.MathMemoryMixScreen)
                     }
                 },
@@ -180,7 +171,7 @@ fun NavGraph(
                     navController.popBackStack()
                 },
                 onHistoryClick = {
-                    if (game.id=="sudoku") {
+                    if (game.id == "sudoku") {
                         navController.navigate(Routes.SavedSudokuResultScreen)
                     }
                 }
@@ -232,6 +223,8 @@ fun NavGraph(
             )
 
             val viewModel: MathPathViewModel = hiltViewModel()
+            val profileViewModel: UserStatsViewModel = hiltViewModel()
+
             val state = viewModel.state
 
             MathPathGameScreen(
@@ -263,8 +256,9 @@ fun NavGraph(
             val difficulty = it.arguments?.getString("difficulty") ?: Difficulty.EASY.name
 
             val viewModel: SudokuViewModel = hiltViewModel()
-            val profileViewModel: UserProfileViewModel = hiltViewModel()
+            val userStatsViewModel: UserStatsViewModel = hiltViewModel()
             val state = viewModel.state
+
 
             val showWinDialog = remember { mutableStateOf(false) }
             val showLoseDialog = remember { mutableStateOf(false) }
@@ -273,18 +267,61 @@ fun NavGraph(
                 viewModel.event.collect { event ->
                     when (event) {
                         is SudokuGameEvent.PuzzleSolved -> {
-                            profileViewModel.updateAfterGame(
-                                score = viewModel.xpEarned,
-                                minutesPlayed =state.value.elapsedTime
-                            )
+                              userStatsViewModel.recordGameResult(
+                                  gameName = "sudoku",
+                                  isWin = true,
+                                  isDraw = false,
+                                  xpEarned = state.value.xpEarned,
+                              )
+//                            profileViewModel.recordGameResult(
+//                                gameName = "sudoku",
+//                                result = GameResult(
+//                                    gameName = "sudoku",
+//                                    difficulty = Difficulty.EASY,
+//                                    isWin = true,
+//                                    isDraw = false,
+//                                    xpEarned = 50
+//                                )
+//                            )
+                            // this is the first one which you did for overall profile update
+//                            profileViewModel.updateAfterGame(
+//                                score = state.value.xpEarned,
+//                                minutesPlayed = state.value.elapsedTime
+//                            )
                             showWinDialog.value = true
                         }
 
                         is SudokuGameEvent.GameOver -> {
-                            profileViewModel.updateAfterGame(
-                                score = viewModel.xpEarned,
-                                minutesPlayed = state.value.elapsedTime
+                            userStatsViewModel.recordGameResult(
+                                gameName = "sudoku",
+                                isWin = false,
+                                isDraw = false,
+                                xpEarned = state.value.xpEarned,
                             )
+//                            profileViewModel.recordGameResult(
+//                                gameName = "sudoku",
+//                                result = GameResult(
+//                                    gameName = "sudoku",
+//                                    difficulty = Difficulty.EASY,
+//                                    isWin = false,
+//                                    isDraw = false,
+//                                    xpEarned = 90
+//                                )
+//                            )
+//                            profileViewModel.updateAfterGame(
+//                                score = state.value.xpEarned,
+//                                minutesPlayed = state.value.elapsedTime
+//                            )
+//                            viewModel.updateAfterGame(
+//                                currentUser = profileViewModel.profileState.value!!,
+//                                result = GameResult(
+//                                    gameName = "sudoku",
+//                                    difficulty = Difficulty.EASY,
+//                                    isWin = false,
+//                                    isDraw = false,
+//                                    xpEarned = 90
+//                                )
+//                            )
                             showLoseDialog.value = true
                         }
                     }
@@ -345,7 +382,7 @@ fun NavGraph(
 
         composable<ColorRaceScreen> {
             val viewModel: ColorRaceViewModel = hiltViewModel()
-            val profileViewModel: UserProfileViewModel = hiltViewModel()
+        //    val profileViewModel: UserProfileViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState().value
 
             // Get difficulty from route
@@ -465,21 +502,28 @@ fun NavGraph(
 
         composable<ProfileScreen> {
 
-//            val viewModel = hiltViewModel<ColorRaceViewModel>()
 //            val state = viewModel.state.collectAsState()
             //   ProfileScreen()
-          //  MazeGameScreen()
-        //    CodeRunnerScreen()
-          //  FearZoneScreen()
+            //  MazeGameScreen()
+            //    CodeRunnerScreen()
+            //  FearZoneScreen()
 
-         //   MathTrapDungeonScreen()
+            //   MathTrapDungeonScreen()
 
-          //  SymbolLogicGrid()
+            //  SymbolLogicGrid()
 
-         //   LogicPuzzleScreen()
+            //   LogicPuzzleScreen()
+
+
+//            // Trigger user initialization only once
+//            LaunchedEffect(Unit) {
+//                viewModel.initializeUser()
+//            }
+
 
             ProfileScreener()
-        //    MathMemoryMixScreen()
+
+            //    MathMemoryMixScreen()
 
 
         }
