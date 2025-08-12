@@ -27,6 +27,7 @@ import com.google.codelab.gamingzone.data.model.GameResult
 import com.google.codelab.gamingzone.presentation.game_detail_screen.DifficultySelectionScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameDetailScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameMode
+import com.google.codelab.gamingzone.presentation.games.algebra.MathAlgebraGameScreen
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessScreen
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessViewModel
 import com.google.codelab.gamingzone.presentation.games.color_race_screen2.ColorRaceScreen
@@ -155,7 +156,6 @@ fun NavGraph(
                     } else if (gameItem.id == "trap") {
                         navController.navigate("trap_bot_game?difficulty=${difficulty?.name}")
                     } else if (gameItem.id == "math") {
-
                         when (mode) {
                             GameMode.LEVEL -> navController.navigate("math_screen?gameId =${gameItem.id}&mode=${mode?.name}")
                             GameMode.TIMED -> navController.navigate("math_screen?gameId=${gameItem.id}&difficulty=${difficulty?.name}&mode=${mode?.name}")
@@ -165,6 +165,8 @@ fun NavGraph(
                         navController.navigate(ColorRaceScreen)
                     } else if (gameItem.id == "math_memory") {
                         navController.navigate(Routes.MathMemoryMixScreen)
+                    } else if (gameItem.id == "algebra") {
+                        navController.navigate(Routes.AlgebraGameScreen)
                     }
                 },
                 onBack = {
@@ -377,6 +379,12 @@ fun NavGraph(
                 onBackClick = {
                     navController.navigate(Routes.HomeScreen)
                 }
+            )
+        }
+
+        composable<Routes.AlgebraGameScreen> {
+            MathAlgebraGameScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 

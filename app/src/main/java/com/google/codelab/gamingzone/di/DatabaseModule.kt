@@ -4,8 +4,10 @@ package com.google.codelab.gamingzone.di
 import android.content.Context
 import androidx.room.Room
 import com.google.codelab.gamingzone.data.local.AppDatabase
+import com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao
 
 import com.google.codelab.gamingzone.data.local1.dao.UserStatsDao
+import com.google.codelab.gamingzone.data.repository.GameRepository
 import com.google.codelab.gamingzone.data.repository.StatsRepository
 import dagger.Module
 import dagger.Provides
@@ -35,4 +37,19 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideStatsRepository(dao: UserStatsDao): StatsRepository = StatsRepository(dao)
+
+    @Provides
+    fun provideAdvancedStatsDao(db: AppDatabase): AdvancedStatsDao = db.advancedStatsDao()
+
+    @Provides
+    @Singleton
+    fun provideGameRepository(
+        advancedStatsDao: AdvancedStatsDao,
+        // StatsRepository is your existing repository that writes main totals/per-game xp
+        statsRepository: StatsRepository
+    ): GameRepository {
+        return GameRepository(statsRepository, advancedStatsDao)
+    }
+
+
 }

@@ -56,6 +56,9 @@ sealed class Routes {
     data object ProfileScreen : Routes()
 
     @Serializable
+    data object AlgebraGameScreen : Routes()
+
+    @Serializable
     data object MathPathScreen : Routes()
 
     @Serializable

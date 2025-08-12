@@ -10,7 +10,8 @@ sealed class Question {
         val right: Int,
         val operator: Char,
         val answer: Int,
-        override val difficultyLevel: Int
+        val missingPosition: Int, // 1 = left missing, 2 = right missing
+       override val difficultyLevel: Int
     ) : Question() {
         override val gameType = GameType.MISSING_NUMBER
     }
@@ -47,7 +48,8 @@ sealed class Question {
 
     data class Mix(
         val inner: Question,
-        override val difficultyLevel: Int
+        override val difficultyLevel: Int,
+        val timeLimit: Int
     ) : Question() {
         override val gameType = GameType.MIX
     }

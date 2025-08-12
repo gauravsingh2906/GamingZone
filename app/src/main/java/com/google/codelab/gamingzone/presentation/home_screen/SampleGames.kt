@@ -118,6 +118,23 @@ object SampleGames {
 //                   difficulty =
 //               )
 //           }
+        ),
+        GameItem(
+            id = "algebra",
+            name = "Algebra Game",
+            category = GameCategory.LOGIC,
+            description = "Use logic to place numbers from 1-9 into each cell of a 9×9 grid.",
+            coverImageUrl = R.drawable.img,
+            tutorialImageUrls = listOf(
+                R.drawable.freepik_chess,R.drawable.chess_freepik0,R.drawable.chess_freepik1,R.drawable.chess_freepik0
+            ),
+            difficultyLevels = listOf("Easy", "Medium", "Hard"),
+            gameImageUrls = listOf(),
+//           buildScreen = { difficulty->
+//               Routes.TrapBotGameScreen(
+//                   difficulty =
+//               )
+//           }
         )
     )
 

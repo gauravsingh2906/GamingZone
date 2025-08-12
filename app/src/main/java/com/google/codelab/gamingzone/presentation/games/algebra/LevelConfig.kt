@@ -21,6 +21,11 @@ data class LevelConfig(val level: Int) {
         }
     }
 
+    fun allowDecimals(): Boolean {
+        // Allow decimals after level 10
+        return level > 10
+    }
+
     fun timeLimitSeconds(): Int {
         return when {
             level <= 5 -> 12
