@@ -56,7 +56,10 @@ sealed class Routes {
     data object ProfileScreen : Routes()
 
     @Serializable
-    data object AlgebraGameScreen : Routes()
+    data class AlgebraGameScreen(val level: Int) : Routes()
+
+    @Serializable
+    data object LevelSelection: Routes()
 
     @Serializable
     data object MathPathScreen : Routes()

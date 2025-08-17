@@ -1,0 +1,641 @@
+package com.google.codelab.gamingzone.presentation.games.algebra
+
+
+import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+
+
+@Composable
+fun MathAlgebraGameScreen(
+    viewModel: GameViewModel = hiltViewModel(),
+    onBack: () -> Unit
+) {
+    val question by viewModel.question.collectAsState()
+    val score by viewModel.score.collectAsState()
+    val level by viewModel.level.collectAsState()
+    val timeLeft by viewModel.timeRemaining.collectAsState()
+    val isGameOver by viewModel.gameOver.collectAsState()
+    val levelCompleted by viewModel.levelCompleted.collectAsState()
+
+    var textAnswer by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf("") }
+
+    var feedback by remember { mutableStateOf<String?>(null) }
+    val focus = LocalFocusManager.current
+
+    LaunchedEffect(isGameOver) {
+        Log.e("Game", isGameOver.toString() + "changes")
+    }
+
+//    LaunchedEffect(levelCompleted) {
+//        if (levelCompleted) {
+//          //  viewModel.levelCompleted()
+//            // onBack()
+//        }
+//    }
+
+    LaunchedEffect(Unit) { viewModel.startNext() }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+//            .padding(16.dp)
+    ) {
+        if (isGameOver) {
+            //    GameOverUI(score, level, onRestart = { viewModel.startGame() }, onBack = onBack)
+            GameOverDialog(
+                level = level,
+                score = score,
+                bestScore = null, // or provide from Room if you track it
+                onRetry = { viewModel.startGame() },
+                onHome = onBack
+            )
+        } else if (levelCompleted) {
+            LevelCompletedDialog(
+                level = level,
+                earnedScore = score,
+                onNextLevel = {
+                    viewModel.levelCompleted() // unlock in Room
+                    viewModel.setLevel(level + 1)
+                    viewModel.startGame()
+                },
+                onReplay = {
+                    viewModel.setLevel(level)
+                    viewModel.startGame()
+                },
+                onHome = {
+                    viewModel.levelCompleted()
+                    onBack()
+                }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf
+                                (
+                                Color(0xFFE3F2FD),
+                                Color(0xFFFAF8FF)
+                            )
+                        )
+                    )
+                    .padding(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+
+                    // ---------- HUD ----------
+                    GameHud(
+                        level = level,
+                        score = score,
+                        timeLeft = timeLeft,
+                        onBack = onBack
+                    )
+
+                    // ---------- Question Card ----------
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .shadow(6.dp, RoundedCornerShape(24.dp)),
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White
+                        )
+                    ) {
+                        Column(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            // Question Title
+                            Text(
+                                text = "Solve this!",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 22.sp,
+                                color = Color(0xFF2C3E50)
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            // Big Question Area
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(Color(0xFFF6F7FB))
+                                    .border(
+                                        1.dp, Color(0xFFE6E8F0),
+                                        RoundedCornerShape(20.dp)
+                                    ),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                when (val q = question) {
+                                    is Question.MissingNumber -> MissingNumberCard(
+                                        q = q,
+                                        textAnswer = textAnswer,
+                                        onTextChange = { textAnswer = it },
+                                        onSubmit = { ans ->
+                                            focus.clearFocus()
+                                            val correct = ans == q.answer
+                                            viewModel.submitAnswer(ans)
+                                            feedback =
+                                                if (correct) "Great job!" else "Oops! Answer: ${q.answer}"
+                                            textAnswer = ""
+                                        }
+                                    )
+
+                                    is Question.MissingOperator -> MissingOperatorCard(q = q) { op ->
+                                        val correct = op == q.answer
+                                        viewModel.submitAnswer(op)
+                                        feedback = if (correct) "Nice!" else "Not quite!"
+                                    }
+
+                                    is Question.TrueFalse -> TrueFalseCard(q = q) { choice ->
+                                        val correct = choice == q.isCorrect
+                                        viewModel.submitAnswer(choice)
+                                        feedback = if (correct) "Correct!" else "Wrong!"
+                                    }
+
+                                    is Question.Reverse -> ReverseCard(q = q) { op ->
+                                        val correct = op == q.answer
+                                        viewModel.submitAnswer(op)
+                                        feedback = if (correct) "Awesome!" else "Try again!"
+                                    }
+
+                                    is Question.Mix -> MixCard(
+                                        q = q,
+                                        textAnswer = textAnswer,
+                                        onTextChange = { textAnswer = it },
+                                        onSubmitMissing = { ans, correctAns ->
+                                            focus.clearFocus()
+                                            viewModel.submitAnswer(ans)
+                                            feedback =
+                                                if (ans == correctAns) "Great!" else "Answer: $correctAns"
+                                            textAnswer = ""
+                                        },
+                                        onSubmitOp = { op, correctOp ->
+                                            viewModel.submitAnswer(op)
+                                            feedback = if (op == correctOp) "Nice!" else "Oops!"
+                                        },
+                                        onSubmitTF = { choice, correct ->
+                                            viewModel.submitAnswer(choice)
+                                            feedback =
+                                                if (choice == correct) "Correct!" else "Wrong!"
+                                        }
+                                    )
+
+                                    null -> LoadingCard()
+                                }
+                            }
+
+                            // Feedback Toast (animated)
+                            FeedbackPill(feedback = feedback)
+                        }
+                    }
+
+                    // Bottom actions
+//                    BottomBar(
+//                        onHint = {
+//                            feedback = "Hint: think step-by-step!"
+//                        },
+//                        onRestart = { viewModel.startGame() },
+//                        onPause = { /* hook if you add pause modal */ }
+//                    )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun GameHud(
+    level: Int,
+    score: Int,
+    timeLeft: Int,
+    onBack: () -> Unit
+) {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
+        // Top row: Back + Title
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(onClick = onBack) { Text("← Back") }
+
+            Text(
+                "Algebra Quest",
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(Modifier.width(64.dp)) // balance back button
+        }
+
+        // Stat row: Level • Score • Time
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatChip(label = "Level", value = "$level")
+            AnimatedContent(
+                targetState = score,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "scoreAnim"
+            ) { sc ->
+                StatChip(label = "Score", value = "$sc")
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            // Timer bar + number
+            Column(horizontalAlignment = Alignment.End) {
+                Text("Time", fontSize = 12.sp, color = Color(0xFF666A7A))
+                LinearProgressIndicator(
+                    progress = {
+                        (timeLeft.coerceAtLeast(0) / maxOf(
+                            1f,
+                            timeLeft.coerceAtLeast(1).toFloat()
+                        ))
+                    },
+                    // we show a full bar shrinking using width animation below
+                    modifier = Modifier
+                        .width(160.dp)
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+                Text("$timeLeft s", fontSize = 12.sp, color = Color(0xFF424656))
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatChip(label: String, value: String) {
+    Row(
+        Modifier
+            .clip(RoundedCornerShape(50))
+            .background(Color(0xFFEEF2FF))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(label, fontSize = 12.sp, color = Color(0xFF5B6BFF))
+        Spacer(Modifier.width(6.dp))
+        Text(value, fontWeight = FontWeight.Bold, color = Color(0xFF2C3E50))
+    }
+}
+
+/* ================  QUESTION CARDS  ================= */
+
+@Composable
+private fun MissingNumberCard(
+    q: Question.MissingNumber,
+    textAnswer: String,
+    onTextChange: (String) -> Unit,
+    onSubmit: (Int) -> Unit
+) {
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BigMathText(
+            left = if (q.missingPosition == 1) "_" else q.left.toString(),
+            op = q.operator,
+            right = if (q.missingPosition == 2) "_" else q.right.toString(),
+            result = when (q.operator) {
+                '+' -> q.left + q.right
+                '-' -> q.left - q.right
+                '×' -> q.left * q.right
+                '÷' -> if (q.right != 0) q.left / q.right else 0
+                else -> q.left + q.right
+            }.toString()
+        )
+
+        OutlinedTextField(
+            value = textAnswer,
+            onValueChange = { if (it.length <= 6) onTextChange(it.filter { ch -> ch.isDigit() || ch == '-' }) },
+            label = { Text("Enter the missing number") },
+            singleLine = true
+        )
+        Button(
+            onClick = { textAnswer.toIntOrNull()?.let(onSubmit) },
+            enabled = textAnswer.toIntOrNull() != null,
+            shape = RoundedCornerShape(16.dp)
+        ) { Text("Submit") }
+    }
+}
+
+@Composable
+private fun MissingOperatorCard(
+    q: Question.MissingOperator,
+    onSubmit: (Char) -> Unit
+) {
+    Column(
+        Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        BigMathText(
+            left = q.a.toString(),
+            op = "?",
+            right = q.b.toString(),
+            result = q.result.toString()
+        )
+        FlowRowButtons(
+            options = q.options.map { it.toString() },
+            onClick = { onSubmit(it.first()) })
+    }
+}
+
+@Composable
+private fun TrueFalseCard(q: Question.TrueFalse, onSubmit: (Boolean) -> Unit) {
+    Column(
+        Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            q.expression,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color(0xFF222A3A),
+            textAlign = TextAlign.Center
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(
+                onClick = { onSubmit(true) },
+                shape = RoundedCornerShape(18.dp)
+            ) { Text("TRUE", fontSize = 18.sp) }
+            Button(
+                onClick = { onSubmit(false) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFE3E3),
+                    contentColor = Color(0xFFB00020)
+                ),
+                shape = RoundedCornerShape(18.dp)
+            ) { Text("FALSE", fontSize = 18.sp) }
+        }
+    }
+}
+
+@Composable
+private fun ReverseCard(q: Question.Reverse, onSubmit: (Char) -> Unit) {
+    Column(
+        Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        BigMathText(
+            left = q.a.toString(),
+            op = "_",
+            right = q.b.toString(),
+            result = q.result.toString()
+        )
+        FlowRowButtons(
+            options = q.options.map { it.toString() },
+            onClick = { onSubmit(it.first()) })
+    }
+}
+
+@Composable
+private fun MixCard(
+    q: Question.Mix,
+    textAnswer: String,
+    onTextChange: (String) -> Unit,
+    onSubmitMissing: (Int, Int) -> Unit,
+    onSubmitOp: (Char, Char) -> Unit,
+    onSubmitTF: (Boolean, Boolean) -> Unit
+) {
+    Column(
+        Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Mix Mode", color = Color(0xFF7B61FF), fontWeight = FontWeight.SemiBold)
+        Spacer(Modifier.height(8.dp))
+        when (val inner = q.inner) {
+            is Question.MissingNumber -> MissingNumberCard(
+                inner,
+                textAnswer,
+                onTextChange
+            ) { onSubmitMissing(it, inner.answer) }
+
+            is Question.MissingOperator -> MissingOperatorCard(inner) {
+                onSubmitOp(
+                    it,
+                    inner.answer
+                )
+            }
+
+            is Question.TrueFalse -> TrueFalseCard(inner) { onSubmitTF(it, inner.isCorrect) }
+            is Question.Reverse -> ReverseCard(inner) { onSubmitOp(it, inner.answer) }
+            else -> LoadingCard()
+        }
+    }
+}
+
+@Composable
+private fun BigMathText(left: String, op: Char, right: String, result: String) {
+    BigMathText(left, op.toString(), right, result)
+}
+
+@Composable
+private fun BigMathText(left: String, op: String, right: String, result: String) {
+    Text(
+        text = "$left  $op  $right  =  $result",
+        fontSize = 34.sp,
+        fontWeight = FontWeight.ExtraBold,
+        color = Color(0xFF222A3A),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 8.dp)
+    )
+}
+
+/* ================  REUSABLES  ================= */
+
+@Composable
+private fun FlowRowButtons(options: List<String>, onClick: (String) -> Unit) {
+    // Simple wrap row without extra deps
+    var rowWidth by remember { mutableStateOf(0) }
+    val maxPerRow = 4.coerceAtMost(options.size)
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        options.take(maxPerRow).forEach { text ->
+            Button(
+                onClick = { onClick(text) },
+                shape = RoundedCornerShape(16.dp)
+            ) { Text(text, fontSize = 18.sp) }
+        }
+    }
+}
+
+@Composable
+private fun FeedbackPill(feedback: String?) {
+    if (feedback == null) return
+    val alpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(200),
+        label = "fb_in"
+    )
+    LaunchedEffect(feedback) {
+        // auto fade out
+        // delay handled implicitly by the caller changing message; or add a delay if you wish
+    }
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(50))
+                .background(Color(0xFF222A3A).copy(alpha = 0.85f * alpha))
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+        ) {
+            Text(
+                feedback,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomBar(
+    onHint: () -> Unit,
+    onRestart: () -> Unit,
+    onPause: () -> Unit
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        TextButton(onClick = onHint) { Text("💡 Hint") }
+        TextButton(onClick = onRestart) { Text("🔁 Restart") }
+        TextButton(onClick = onPause) { Text("⏸ Pause") }
+    }
+}
+
+@Composable
+private fun LoadingCard() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+/* ================  GAME OVER DIALOG  ================= */
+
+
+
+@Composable
+fun MissingNumberUI(
+    q: Question.MissingNumber,
+    textAnswer: String,
+    onTextChange: (String) -> Unit,
+    onSubmit: (Int) -> Unit
+) {
+    val leftText = if (q.missingPosition == 1) "_" else q.left.toString()
+    val rightText = if (q.missingPosition == 2) "_" else q.right.toString()
+
+    Text(
+        "$leftText ${q.operator} $rightText = ${
+            when (q.operator) {
+                '+' -> q.left + q.right
+                '-' -> q.left - q.right
+                '×' -> q.left * q.right
+                '÷' -> if (q.right != 0) q.left / q.right else 0
+                else -> q.left + q.right
+            }
+        }"
+    )
+
+    OutlinedTextField(
+        value = textAnswer,
+        onValueChange = onTextChange,
+        label = { Text("Answer") }
+    )
+    Spacer(Modifier.height(8.dp))
+    Button(onClick = {
+        val ans = textAnswer.toIntOrNull()
+        if (ans != null) onSubmit(ans)
+    }) { Text("Submit") }
+}
+
+@Composable
+fun MissingOperatorUI(q: Question.MissingOperator, onSubmit: (Char) -> Unit) {
+    Text("${q.a} ? ${q.b} = ${q.result}")
+    Row(Modifier.padding(top = 8.dp)) {
+        q.options.forEach { op ->
+            Button(onClick = { onSubmit(op) }, modifier = Modifier.padding(4.dp)) {
+                Text(op.toString())
+            }
+        }
+    }
+}
+
+@Composable
+fun TrueFalseUI(q: Question.TrueFalse, onSubmit: (Boolean) -> Unit) {
+    Text(q.expression)
+    Row(Modifier.padding(top = 8.dp)) {
+        Button(onClick = { onSubmit(true) }) { Text("✔") }
+        Spacer(Modifier.width(8.dp))
+        Button(onClick = { onSubmit(false) }) { Text("✖") }
+    }
+}
+
+@Composable
+fun ReverseUI(q: Question.Reverse, onSubmit: (Char) -> Unit) {
+    Text("${q.a} _ ${q.b} = ${q.result}")
+    Row(Modifier.padding(top = 8.dp)) {
+        q.options.forEach { op ->
+            Button(onClick = { onSubmit(op) }, modifier = Modifier.padding(4.dp)) {
+                Text(op.toString())
+            }
+        }
+    }
+}

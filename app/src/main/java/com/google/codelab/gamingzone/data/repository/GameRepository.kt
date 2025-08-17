@@ -1,9 +1,13 @@
 package com.google.codelab.gamingzone.data.repository
 
 import com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao
+import com.google.codelab.gamingzone.data.local1.dao.LevelProgressDao
 import com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity
+import com.google.codelab.gamingzone.data.local1.entity.LevelProgressEntity
 import com.google.codelab.gamingzone.presentation.games.algebra.GameType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class GameRepository @Inject constructor(
     private val statsRepository: StatsRepository, // existing repo
-    private val advancedStatsDao: AdvancedStatsDao
+    private val advancedStatsDao: AdvancedStatsDao,
 ) {
 
      /**
@@ -39,7 +43,7 @@ class GameRepository @Inject constructor(
                 val entity = AdvancedStatsEntity(
                     userId = userId,
                     gameType = gameType.name,
-                    totalPlayed = 1,
+                    totalPlayed = existing?.totalPlayed ?: 1,
                     totalCorrect = if (correct) 1 else 0,
                     totalWrong = if (!correct) 1 else 0,
                     bestStreak = if (correct) 1 else 0,
@@ -54,7 +58,7 @@ class GameRepository @Inject constructor(
                 advancedStatsDao.updateSummary(
                     userId = userId,
                     gameType = gameType.name,
-                    played = 1,
+                    played = existing.totalPlayed + 1,
                     correct = if (correct) 1 else 0,
                     wrong = if (!correct) 1 else 0,
                     lastStreak = newLastStreak,
@@ -64,4 +68,7 @@ class GameRepository @Inject constructor(
             }
         }
     }
+
+
+
 }

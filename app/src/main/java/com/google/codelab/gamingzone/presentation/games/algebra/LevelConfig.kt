@@ -23,7 +23,7 @@ data class LevelConfig(val level: Int) {
 
     fun allowDecimals(): Boolean {
         // Allow decimals after level 10
-        return level > 10
+        return false
     }
 
     fun timeLimitSeconds(): Int {

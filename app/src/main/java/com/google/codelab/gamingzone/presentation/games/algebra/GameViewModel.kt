@@ -1,22 +1,26 @@
 package com.google.codelab.gamingzone.presentation.games.algebra
 
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.codelab.gamingzone.data.repository.GameRepository
+import com.google.codelab.gamingzone.data.repository.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val levelRepository: LevelRepository
 ) : ViewModel() {
 
     private val manager = GameManager()
@@ -33,6 +37,9 @@ class GameViewModel @Inject constructor(
     private val _gameOver = MutableStateFlow(false)
     val gameOver: StateFlow<Boolean> = _gameOver
 
+    private val _levelCompleted = MutableStateFlow(false)
+    val levelCompleted: StateFlow<Boolean> = _levelCompleted
+
     private val _timeRemaining = MutableStateFlow(0)
     val timeRemaining: StateFlow<Int> = _timeRemaining
 
@@ -42,9 +49,88 @@ class GameViewModel @Inject constructor(
     private var questionStartTime: Long = 0L
     private var timerJob: Job? = null
 
+    private val _maxUnlockedLevel = MutableStateFlow(1)
+    val maxUnlockedLevel: StateFlow<Int> = _maxUnlockedLevel
+
+    private var currentLevel = 1
+
+    fun setLevel(level: Int) {
+        currentLevel = level
+        Log.d("Level", "Level set to $level")
+        Log.d("Level Current", "Level set to $currentLevel")
+        _level.value = level
+        Log.d("Level Value","Level value:${_level.value}")
+    }
+
+    fun levelCompleted() {
+        viewModelScope.launch {
+
+            val currentMax = levelRepository.getMaxUnlockedLevel().first() // get latest value from flow
+            Log.d("Level", "Current max: $currentMax")
+            Log.d("Level", "Current level: $currentLevel")
+
+            if (currentLevel >= currentMax) {
+                levelRepository.unlockNextLevelIfNeeded(currentLevel)
+            }
+
+        }
+    }
+
+
+    //happen on click
+    fun markLevelCompleted() {
+        _levelCompleted.value = true
+        unlockNextLevelIfNeeded()
+    }
+
+    // mark on complete
+    private fun unlockNextLevelIfNeeded() {
+        viewModelScope.launch {
+            val nextLevel = currentLevel + 1
+            levelRepository.unlockNextLevelIfNeeded(currentLevel)
+            _maxUnlockedLevel.value = nextLevel  // update local cache
+            Log.d("Level", "Unlocked next level: $nextLevel")
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            levelRepository.ensureInitialized()
+            levelRepository.getMaxUnlockedLevel().collect { level ->
+                _maxUnlockedLevel.value = level
+                Log.d("Level", "Collected max unlocked level = $level")
+            }
+        }
+    }
+
+
+
+
+//    init {
+//        viewModelScope.launch {
+//            gameRepository.getMaxUnlockedLevel().collect { level ->
+//                Log.d("Level",level.toString())
+//                _maxUnlockedLevel.value = level
+//            }
+//        }
+//    }
+
+    //happen on click
+//    fun completeLevel(currentLevel: Int) {
+//        if (currentLevel >= _maxUnlockedLevel.value) {
+//            val newLevel = currentLevel + 1
+//            _maxUnlockedLevel.value = newLevel
+//            viewModelScope.launch {
+//                gameRepository.updateMaxUnlockedLevel(newLevel)
+//            }
+//        }
+//    }
+
+
+
     fun startGame() {
         _score.value = 0
-        _level.value = 1
+        _level.value = currentLevel
         _gameOver.value = false
         startNext()
     }
@@ -66,9 +152,9 @@ class GameViewModel @Inject constructor(
                 delay(1000)
                 _timeRemaining.value--
             }
-            if (_timeRemaining.value <= 0 && !_gameOver.value) {
+            if (_timeRemaining.value <= 0 || !_gameOver.value) {
                 // Time is up
-                endGame()
+               // endGame()
             }
         }
     }
@@ -116,11 +202,15 @@ class GameViewModel @Inject constructor(
         if (correct) {
             _score.value += xp
             viewModelScope.launch {
-                gameRepository.recordResult(q.gameType, correct, false, xp, timeSec)
+                gameRepository.recordResult(q.gameType, true, false, xp, timeSec)
+
+      //          levelRepository.unlockNextLevelIfNeeded(currentLevel+1)
             }
 
-            if ( (_score.value/100) >_level.value) {
-                _level.value =_level.value+1
+            if ((_score.value/100) > _level.value) {
+                markLevelCompleted()
+             //   completeLevel(_level.value+1)
+              //  _level.value =_level.value+1
             }
             startNext()
         } else {
@@ -152,17 +242,4 @@ class GameViewModel @Inject constructor(
         _gameOver.value = true
     }
 
-    private fun checkNumericAnswer(userAnswer: Any?, correctAnswer: Number): Boolean {
-        return when (correctAnswer) {
-            is Int -> (userAnswer as? Int) == correctAnswer
-            is Double -> {
-                val tolerance = 0.01
-                val ans = (userAnswer as? String)?.toDoubleOrNull() ?: (userAnswer as? Double)
-                ans != null && kotlin.math.abs(ans - correctAnswer) < tolerance
-            }
-            else -> false
-        }
-    }
-
-    fun setLevel(l: Int) { _level.value = l.coerceAtLeast(1) }
 }

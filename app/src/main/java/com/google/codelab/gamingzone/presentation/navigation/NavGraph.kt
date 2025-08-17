@@ -2,6 +2,7 @@ package com.google.codelab.gamingzone.presentation.navigation
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,11 +24,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.google.codelab.gamingzone.SplashScreen
 import com.google.codelab.gamingzone.data.model.GameResult
 import com.google.codelab.gamingzone.presentation.game_detail_screen.DifficultySelectionScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameDetailScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameMode
+import com.google.codelab.gamingzone.presentation.games.algebra.GameViewModel
 import com.google.codelab.gamingzone.presentation.games.algebra.MathAlgebraGameScreen
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessScreen
 import com.google.codelab.gamingzone.presentation.games.chess_screen3.ChessViewModel
@@ -46,6 +50,8 @@ import com.google.codelab.gamingzone.presentation.games.trap_bot.TrapTheBotScree
 import com.google.codelab.gamingzone.presentation.games.trap_bot.TrapTheBotViewModel
 import com.google.codelab.gamingzone.presentation.home_screen.HomeScreen
 import com.google.codelab.gamingzone.presentation.home_screen.HomeViewModel
+import com.google.codelab.gamingzone.presentation.level_based.LevelBasedScreen
+import com.google.codelab.gamingzone.presentation.level_based.LevelSelectionViewModel
 import com.google.codelab.gamingzone.presentation.navigation.Routes.ColorRaceScreen
 import com.google.codelab.gamingzone.presentation.navigation.Routes.ProfileScreen
 import com.google.codelab.gamingzone.presentation.profile_screen.ProfileScreener
@@ -166,7 +172,7 @@ fun NavGraph(
                     } else if (gameItem.id == "math_memory") {
                         navController.navigate(Routes.MathMemoryMixScreen)
                     } else if (gameItem.id == "algebra") {
-                        navController.navigate(Routes.AlgebraGameScreen)
+                        navController.navigate(Routes.LevelSelection)
                     }
                 },
                 onBack = {
@@ -180,6 +186,30 @@ fun NavGraph(
             )
 
         }
+
+        composable<Routes.LevelSelection> {
+
+            val viewModel: LevelSelectionViewModel = hiltViewModel()
+
+            val gameViewModel: GameViewModel = hiltViewModel()
+
+            val maxUnlocked by viewModel.maxUnlockedLevel.collectAsState()
+
+            Log.d("Nav Level",maxUnlocked.toString())
+
+            LevelBasedScreen(
+                onLevelClick = { level ->
+                    Log.e("Nav Level Inside", "nav level inside$level")
+                    if (level <= maxUnlocked) {
+                        gameViewModel.setLevel(level)
+                        navController.navigate(Routes.AlgebraGameScreen(level))
+                    }
+                },
+                maxUnlockedLevel = maxUnlocked
+            )
+        }
+
+
 
 
 //        composable<Routes.GameDetailScreen> {
@@ -275,6 +305,7 @@ fun NavGraph(
                                   isDraw = false,
                                   xpEarned = state.value.xpEarned,
                               )
+                            userStatsViewModel.advancedStats("sudoku")
 //                            profileViewModel.recordGameResult(
 //                                gameName = "sudoku",
 //                                result = GameResult(
@@ -300,6 +331,7 @@ fun NavGraph(
                                 isDraw = false,
                                 xpEarned = state.value.xpEarned,
                             )
+                            userStatsViewModel.advancedStats("sudoku")
 //                            profileViewModel.recordGameResult(
 //                                gameName = "sudoku",
 //                                result = GameResult(
@@ -383,8 +415,22 @@ fun NavGraph(
         }
 
         composable<Routes.AlgebraGameScreen> {
+
+            val gameViewModel: GameViewModel= hiltViewModel()
+            val level = it.toRoute<Routes.AlgebraGameScreen>().level
+
+            Log.d("Algebra Level",level.toString())
+
+           // val level = it.arguments.getString("level")
+
+            LaunchedEffect(level) {
+                gameViewModel.setLevel(level)
+            }
+
             MathAlgebraGameScreen(
-                onBack = { navController.popBackStack() }
+                onBack = {
+                    navController.navigate(Routes.LevelSelection)
+                }
             )
         }
 

@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.codelab.gamingzone.data.local.AppDatabase
 import com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao
+import com.google.codelab.gamingzone.data.local1.dao.LevelProgressDao
 
 import com.google.codelab.gamingzone.data.local1.dao.UserStatsDao
 import com.google.codelab.gamingzone.data.repository.GameRepository
@@ -42,11 +43,15 @@ object DatabaseModule {
     fun provideAdvancedStatsDao(db: AppDatabase): AdvancedStatsDao = db.advancedStatsDao()
 
     @Provides
+    fun provideLevelProgressDao(db: AppDatabase): LevelProgressDao = db.levelProgressDao()
+
+    @Provides
     @Singleton
     fun provideGameRepository(
         advancedStatsDao: AdvancedStatsDao,
         // StatsRepository is your existing repository that writes main totals/per-game xp
-        statsRepository: StatsRepository
+        statsRepository: StatsRepository,
+        levelProgressDao: LevelProgressDao
     ): GameRepository {
         return GameRepository(statsRepository, advancedStatsDao)
     }

@@ -43,8 +43,9 @@ fun ProfileScreener(viewModel: UserStatsViewModel = hiltViewModel()) {
     val userId by viewModel.userId.collectAsState()
     val totalStats by viewModel.totalStatsFlow.collectAsState()
     val perGameStats by viewModel.perGameStatsFlow.collectAsState()
+    val advancedStats by viewModel.advancedStatsFlow.collectAsState()
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
         Text(text = "User ID: ${userId ?: "initializing..."}")
         Spacer(Modifier.height(8.dp))
         Text(text = "Total games: ${totalStats?.totalGamesPlayed ?: 0}")
@@ -57,7 +58,14 @@ fun ProfileScreener(viewModel: UserStatsViewModel = hiltViewModel()) {
 
         perGameStats.forEach { g ->
             Spacer(Modifier.height(6.dp))
-            Text(text = "${g.gameName} — played: ${g.gamesPlayed}, wins: ${g.wins}, losses: ${g.losses}, xp: ${g.xp}")
+            Text(
+                text = "${g.gameName} — played: ${g.gamesPlayed}, wins: ${g.wins}, losses: ${g.losses}, xp: ${g.xp}")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+        advancedStats.forEach {
+            Text(
+                text = "${it.gameType} — played: ${it.totalPlayed}, wins: ${it.totalCorrect}, losses: ${it.totalWrong}, xp: ${it.xpEarned},bestStreak: ${it.bestStreak}, lastStreak: ${it.lastStreak}, time: ${it.totalTimeSeconds}, avgTime: ${it.totalTimeSeconds/it.totalPlayed}, avg: ${it.xpEarned/it.totalPlayed}")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

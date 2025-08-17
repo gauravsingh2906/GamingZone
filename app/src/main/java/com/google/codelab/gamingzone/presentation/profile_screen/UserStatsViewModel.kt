@@ -2,9 +2,11 @@ package com.google.codelab.gamingzone.presentation.profile_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity
 import com.google.codelab.gamingzone.data.local1.entity.PerGameStatsEntity
 import com.google.codelab.gamingzone.data.local1.entity.TotalStatsEntity
 import com.google.codelab.gamingzone.data.local1.entity.UserEntity
+import com.google.codelab.gamingzone.data.repository.AdvancedStatsRepository
 import com.google.codelab.gamingzone.data.repository.StatsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserStatsViewModel @Inject constructor(
-    private val repository: StatsRepository
+    private val repository: StatsRepository,
+    private val statsRepository: AdvancedStatsRepository
 ) : ViewModel() {
 
     // userId will be initialized in init block asynchronously
@@ -38,6 +41,11 @@ class UserStatsViewModel @Inject constructor(
             .flatMapLatest { repository.observePerGameStats(it) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
+    val advancedStatsFlow:StateFlow<List<AdvancedStatsEntity>> = _userId
+        .filterNotNull()
+        .flatMapLatest { statsRepository.observeAllForUser(it) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
     init {
         // create user row if needed and set _userId
         viewModelScope.launch {
@@ -51,6 +59,13 @@ class UserStatsViewModel @Inject constructor(
         val id = _userId.value ?: return
         viewModelScope.launch {
             repository.recordGameResult(id, gameName, isWin, isDraw, xpEarned)
+        }
+    }
+
+    fun advancedStats(gameName: String) {
+        val id = _userId.value ?: return
+        viewModelScope.launch {
+            statsRepository.getFor(id, gameName)
         }
     }
 }
