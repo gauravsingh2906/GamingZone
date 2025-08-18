@@ -68,23 +68,86 @@ class MathMemoryViewModel @Inject constructor(
         _answerOptions.value = generateAnswerOptions(state)
     }
 
+//    private fun generateAnswerOptions(correct: Int): List<AnswerOption> {
+//        val options = mutableSetOf(correct)
+//        val rand = java.util.Random()
+//        val maxOffset = maxOf(3, correct / 3)
+//        val minCandidate = 1
+//        var attempts = 0
+//
+//        Log.d("AnswerGen", "Generating options for correct answer: $correct")
+//
+//        // Try to generate unique candidates using offset logic
+//        while (options.size < 4 && attempts < 25) {
+//            val offset = rand.nextInt(maxOffset) + 1 // 1 ~ maxOffset
+//            val candidate = if (rand.nextBoolean()) correct + offset else correct - offset
+//            Log.d("AnswerGen", "Attempt $attempts: Offset=$offset, Candidate=$candidate")
+//            if (candidate > 0 && candidate != correct) {
+//                Log.d("AnswerGen", "Adding candidate: $candidate")
+//                options.add(candidate)
+//            } else {
+//                Log.d("AnswerGen", "Skipping candidate (invalid or duplicate)")
+//            }
+//            attempts++
+//        }
+//
+//        // Fallback: fill remaining options if few candidates are possible.
+//        var fallbackValue = minCandidate
+//        while (options.size < 4) {
+//            if (fallbackValue != correct && fallbackValue !in options) {
+//                options.add(fallbackValue)
+//            }
+//            fallbackValue++
+//        }
+//
+//        val value = options.shuffled().map { AnswerOption(it, it == correct) }
+//        Log.d("AnswerGen", "Final options: $options")
+//        Log.d("AnswerGen", "Shuffled AnswerOption list: $value")
+//        return value
+//    }
+
     private fun generateAnswerOptions(correct: Int): List<AnswerOption> {
         val options = mutableSetOf(correct)
-        Log.d("options",options.toString())
         val rand = java.util.Random()
-        val maxOffset = maxOf(3, correct / 3)
+        val maxOffset = maxOf(3, kotlin.math.abs(correct) / 3)
+        val minCandidate = 1
+        var attempts = 0
 
-        while (options.size < 4) {
-            val offset = rand.nextInt(maxOffset) + 1 // 1 ~ maxOffset
-            Log.d("Offset",offset.toString())
+        Log.d("AnswerGen", "Generating answer options for correct: $correct")
+
+        while (options.size < 4 && attempts < 25) {
+            val offset = rand.nextInt(maxOffset) + 1
             val candidate = if (rand.nextBoolean()) correct + offset else correct - offset
-            Log.d("Candidate",candidate.toString())
-            if (candidate > 0) options.add(candidate)
+            Log.d("AnswerGen", "Attempt $attempts: Offset=$offset, Candidate=$candidate")
+
+            // Allow candidate to be negative or zero (if your game logic can handle), or filter positives only as needed
+            if (candidate != correct) {
+                options.add(candidate)
+                Log.d("AnswerGen", "Added candidate: $candidate")
+            } else {
+                Log.d("AnswerGen", "Skipped candidate (duplicate)")
+            }
+            attempts++
         }
-        val value = options.shuffled().map { AnswerOption(it, it == correct) }
-        Log.d("Value",value.toString())
-        return value
+
+        // Fallback to fill options if random fails to produce enough unique candidates
+        var fallbackValue = if (correct > 4) correct - 4 else 1
+        while (options.size < 4) {
+            if (fallbackValue != correct && fallbackValue !in options) {
+                options.add(fallbackValue)
+                Log.d("AnswerGen", "Fallback added: $fallbackValue")
+            }
+            fallbackValue++
+        }
+
+        val shuffledOptions = options.shuffled().map { AnswerOption(it, it == correct) }
+        Log.d("AnswerGen", "Final options: $options")
+        Log.d("AnswerGen", "Shuffled options: $shuffledOptions")
+
+        return shuffledOptions
     }
+
+
 
     fun onAction(action: MathMemoryAction) {
         when (action) {
@@ -239,4 +302,11 @@ class MathMemoryViewModel @Inject constructor(
             onAction(MathMemoryAction.RevealCards)
         }
     }
+
+    fun getXpForLevel(level: Int, streak: Int): Int {
+        val baseXP = 10 + ((level - 1) / 5) * 2
+        val streakBonus = if (streak > 5) 3 else 0
+        return baseXP + streakBonus
+    }
+
 }

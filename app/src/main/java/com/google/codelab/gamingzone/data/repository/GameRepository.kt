@@ -20,7 +20,7 @@ class GameRepository @Inject constructor(
     private val advancedStatsRepository: AdvancedStatsRepository
 ) {
 
-     /**
+    /**
      * Ensure user exists and then record:
      * - central stats via StatsRepository.recordGameResult(...)
      * - advanced per-type stats via AdvancedStatsDao.updateSummary / insert
@@ -41,12 +41,12 @@ class GameRepository @Inject constructor(
         // update advanced stats
         withContext(Dispatchers.IO) {
             val existing = advancedStatsDao.getFor(userId, gameType.name)
-          //  Log.d("Data",existing.toString())
+            //  Log.d("Data",existing.toString())
             if (existing == null) {
                 val entity = AdvancedStatsEntity(
                     userId = userId,
                     gameType = gameType.name,
-                    totalPlayed = existing?.totalPlayed,
+                    totalPlayed = 1,
                     totalCorrect = if (correct) 1 else 0,
                     totalWrong = if (!correct) 1 else 0,
                     bestStreak = if (correct) 1 else 0,
@@ -61,18 +61,42 @@ class GameRepository @Inject constructor(
                 Log.d("TAG", "recordResult: $totalPlayed")
                 Log.d("TAG", "recordResult: ${existing.totalPlayed}")
                 // updateSummary will update bestStreak based on lastStreak per DAO SQL
-                  advancedStatsDao.updateSummary(
-                    userId = userId,
-                    gameType = gameType.name,
-                    played= totalPlayed,
-                    correct = if (correct) 1 else 0,
-                    wrong = if (!correct) 1 else 0,
-                    lastStreak = newLastStreak,
-                    timeSec = timeTakenSec,
-                    xp = xpEarned
-                )
 
-                Log.d("Data","last streak: $newLastStreak" + "total played: $totalPlayed" + "correct: ${if (correct) 1 else 0}" + "wrong: ${if (!correct) 1 else 0}")
+               val updated = existing.copy(
+                   userId = userId,
+                   gameType = gameType.name,
+                   totalPlayed =existing.totalPlayed + 1,
+                   totalCorrect =existing.totalCorrect+ if (correct) 1 else 0,
+                   totalWrong =existing.totalWrong+ if (!correct) 1 else 0,
+                   bestStreak =existing.bestStreak+ if (correct) 1 else 0,
+                   lastStreak = newLastStreak,
+                   totalTimeSeconds =existing.totalTimeSeconds+ timeTakenSec,
+                   xpEarned =existing.xpEarned+ xpEarned
+               )
+
+                advancedStatsDao.insert(updated)
+
+
+
+//                advancedStatsDao.updateSummary(
+//                    userId = userId,
+//                    gameType = gameType.name,
+//                    played = totalPlayed,
+//                    correct = if (correct) 1 else 0,
+//                    wrong = if (!correct) 1 else 0,
+//                    lastStreak = newLastStreak,
+//                    timeSec = timeTakenSec,
+//                    xp = xpEarned
+//                )
+
+
+
+
+
+                Log.d(
+                    "Data",
+                    "last streak: $newLastStreak" + "total played: $totalPlayed" + "correct: ${if (correct) 1 else 0}" + "wrong: ${if (!correct) 1 else 0}"
+                )
 
 //                advancedStatsRepository.updateSummary(
 //                    userId = userId,
@@ -84,7 +108,6 @@ class GameRepository @Inject constructor(
 //                    timeSec = timeTakenSec,
 //                    xp = xpEarned
 //                )
-
 
 
 //                val updated = existing.copy(
@@ -102,7 +125,6 @@ class GameRepository @Inject constructor(
             }
         }
     }
-
 
 
 }

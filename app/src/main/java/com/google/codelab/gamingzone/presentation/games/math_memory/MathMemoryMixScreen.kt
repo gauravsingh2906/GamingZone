@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -205,29 +206,60 @@ fun StartNumberBox(value: Int, textColor: Color, bgColor: Color) {
 
 @Composable
 fun CardsRow(cards: List<MemoryCard>, textColor: Color) {
-    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
-        cards.forEach { card ->
-            ElevatedCard(
-                modifier = Modifier.size(64.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = Color.White.copy(alpha = 0.94f)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = when (card.op) {
-                            Op.ADD -> "+${card.value}"
-                            Op.SUB -> "-${card.value}"
-                            Op.MUL -> "×${card.value}"
-                            Op.DIV -> "÷${card.value}"
-                        },
-                        color = textColor,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                }
-            }
-        }
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(18.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+       item {
+           cards.forEach { card ->
+               ElevatedCard(
+                   modifier = Modifier.size(64.dp),
+                   shape = RoundedCornerShape(16.dp),
+                   colors = CardDefaults.elevatedCardColors(containerColor = Color.White.copy(alpha = 0.94f)),
+                   elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+               ) {
+                   Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                       Text(
+                           text = when (card.op) {
+                               Op.ADD -> "+${card.value}"
+                               Op.SUB -> "-${card.value}"
+                               Op.MUL -> "×${card.value}"
+                               Op.DIV -> "÷${card.value}"
+                           },
+                           color = textColor,
+                           style = MaterialTheme.typography.headlineMedium
+                       )
+                   }
+               }
+           }
+       }
+
+
     }
+//    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+//        cards.forEach { card ->
+//            ElevatedCard(
+//                modifier = Modifier.size(64.dp),
+//                shape = RoundedCornerShape(16.dp),
+//                colors = CardDefaults.elevatedCardColors(containerColor = Color.White.copy(alpha = 0.94f)),
+//                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+//            ) {
+//                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+//                    Text(
+//                        text = when (card.op) {
+//                            Op.ADD -> "+${card.value}"
+//                            Op.SUB -> "-${card.value}"
+//                            Op.MUL -> "×${card.value}"
+//                            Op.DIV -> "÷${card.value}"
+//                        },
+//                        color = textColor,
+//                        style = MaterialTheme.typography.headlineMedium
+//                    )
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable

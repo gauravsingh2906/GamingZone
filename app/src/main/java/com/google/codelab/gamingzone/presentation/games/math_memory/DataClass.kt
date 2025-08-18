@@ -1,5 +1,6 @@
 package com.google.codelab.gamingzone.presentation.games.math_memory
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.graphics.Shape
@@ -15,21 +16,52 @@ data class MemoryCard(
     val value: Int
 )
 
+//data class MemoryLevel(
+//    val number: Int,
+//    val cards: List<MemoryCard>,
+//    val start: Int
+//) {
+//    val correctAnswer: Int
+//        get() = cards.fold(start) { acc, card ->
+//            when (card.op) {
+//                Op.ADD -> acc + card.value
+//                Op.SUB -> acc - card.value
+//                Op.MUL -> acc * card.value
+//                Op.DIV -> if (card.value != 0) acc / card.value else acc
+//            }
+//        }
+//}
+
 data class MemoryLevel(
     val number: Int,
     val cards: List<MemoryCard>,
     val start: Int
 ) {
     val correctAnswer: Int
-        get() = cards.fold(start) { acc, card ->
-            when (card.op) {
-                Op.ADD -> acc + card.value
-                Op.SUB -> acc - card.value
-                Op.MUL -> acc * card.value
-                Op.DIV -> if (card.value != 0) acc / card.value else acc
+        get() {
+            var acc = start
+            cards.forEachIndexed { idx, card ->
+                val prev = acc
+                acc = when (card.op) {
+                    Op.ADD -> acc + card.value
+                    Op.SUB -> acc - card.value
+                    Op.MUL -> acc * card.value
+                    Op.DIV -> if (card.value != 0) acc / card.value else acc
+                }
+                Log.d("MathMemoryDebug", "Step ${idx + 1}: ${card.op} ${card.value} ($prev ${symbol(card.op)} ${card.value}) = $acc")
             }
+            return acc
         }
+
 }
+
+private fun symbol(op: Op): String = when (op) {
+    Op.ADD -> "+"
+    Op.SUB -> "-"
+    Op.MUL -> "×"
+    Op.DIV -> "÷"
+}
+
 
 
 
