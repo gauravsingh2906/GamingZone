@@ -1,0 +1,675 @@
+kotlin version: 2.0.0
+error message: org.jetbrains.kotlin.backend.common.BackendException: Backend Internal error: Exception during IR lowering
+File being compiled: D:/Gaurav/GamingZone/app/src/main/java/com/google/codelab/gamingzone/data/repository/GameRepository.kt
+The root cause java.lang.RuntimeException was thrown at: org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.common.CodegenUtil.reportBackendException(CodegenUtil.kt:253)
+	at org.jetbrains.kotlin.backend.common.CodegenUtil.reportBackendException$default(CodegenUtil.kt:236)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invokeSequential(performByIrFile.kt:65)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invoke(performByIrFile.kt:52)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invoke(performByIrFile.kt:38)
+	at org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase.phaseBody(CompilerPhase.kt:166)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:29)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:16)
+	at org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase.phaseBody(CompilerPhase.kt:166)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:62)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.invokeCodegen(JvmIrCodegenFactory.kt:371)
+	at org.jetbrains.kotlin.codegen.CodegenFactory.generateModule(CodegenFactory.kt:47)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.generateModuleInFrontendIRMode(JvmIrCodegenFactory.kt:433)
+	at org.jetbrains.kotlin.cli.jvm.compiler.pipeline.JvmCompilerPipelineKt.generateCodeFromIr(jvmCompilerPipeline.kt:241)
+	at org.jetbrains.kotlin.cli.jvm.compiler.pipeline.JvmCompilerPipelineKt.compileModulesUsingFrontendIrAndLightTree(jvmCompilerPipeline.kt:140)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecute(K2JVMCompiler.kt:155)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecute(K2JVMCompiler.kt:50)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:104)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:48)
+	at org.jetbrains.kotlin.cli.common.CLITool.exec(CLITool.kt:101)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner.runCompiler(IncrementalJvmCompilerRunner.kt:453)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner.runCompiler(IncrementalJvmCompilerRunner.kt:62)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:506)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:423)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally$lambda$9$compile(IncrementalCompilerRunner.kt:249)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally(IncrementalCompilerRunner.kt:267)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:120)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:676)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:92)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1661)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.RuntimeException: Exception while generating code for:
+FUN name:recordResult visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository, gameType:com.google.codelab.gamingzone.presentation.games.algebra.GameType, correct:kotlin.Boolean, isDraw:kotlin.Boolean, xpEarned:kotlin.Int, timeTakenSec:kotlin.Long, $completion:kotlin.coroutines.Continuation<kotlin.Unit>) returnType:kotlin.Any? [suspend]
+  $this: VALUE_PARAMETER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository
+  VALUE_PARAMETER name:gameType index:0 type:com.google.codelab.gamingzone.presentation.games.algebra.GameType
+  VALUE_PARAMETER name:correct index:1 type:kotlin.Boolean
+  VALUE_PARAMETER name:isDraw index:2 type:kotlin.Boolean
+  VALUE_PARAMETER name:xpEarned index:3 type:kotlin.Int
+  VALUE_PARAMETER name:timeTakenSec index:4 type:kotlin.Long
+  VALUE_PARAMETER CONTINUATION_CLASS name:$completion index:5 type:kotlin.coroutines.Continuation<kotlin.Unit>
+  BLOCK_BODY
+    CLASS CONTINUATION_CLASS CLASS name:<Continuation> modality:FINAL visibility:public/*package*/ superTypes:[kotlin.coroutines.jvm.internal.ContinuationImpl]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>
+      FIELD CONTINUATION_CLASS_RESULT_FIELD name:result type:kotlin.Result<kotlin.Any?> visibility:public/*package*/
+      FIELD FIELD_FOR_OUTER_THIS name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]
+      FIELD name:label type:kotlin.Int visibility:public/*package*/
+      CONSTRUCTOR visibility:public/*package*/ <> (this$0:com.google.codelab.gamingzone.data.repository.GameRepository, $completion:kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>>?) returnType:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> [primary]
+        VALUE_PARAMETER name:this$0 index:0 type:com.google.codelab.gamingzone.data.repository.GameRepository
+        VALUE_PARAMETER name:$completion index:1 type:kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>>?
+        BLOCK_BODY
+          SET_FIELD 'FIELD FIELD_FOR_OUTER_THIS name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+            value: GET_VAR 'this$0: com.google.codelab.gamingzone.data.repository.GameRepository declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.<init>' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> ($completion: kotlin.coroutines.Continuation<kotlin.Any?>?) declared in kotlin.coroutines.jvm.internal.ContinuationImpl'
+            $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>>? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.<init>' type=kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>>? origin=null
+      FUN name:invokeSuspend visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>, $result:kotlin.Result<kotlin.Any?>) returnType:kotlin.Any?
+        overridden:
+          public abstract fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in kotlin.coroutines.jvm.internal.ContinuationImpl
+        $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>
+        VALUE_PARAMETER name:$result index:0 type:kotlin.Result<kotlin.Any?>
+        BLOCK_BODY
+          SET_FIELD 'FIELD CONTINUATION_CLASS_RESULT_FIELD name:result type:kotlin.Result<kotlin.Any?> visibility:public/*package*/' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+            value: GET_VAR '$result: kotlin.Result<kotlin.Any?> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=kotlin.Result<kotlin.Any?> origin=null
+          SET_FIELD 'FIELD name:label type:kotlin.Int visibility:public/*package*/' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+            value: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_FIELD 'FIELD name:label type:kotlin.Int visibility:public/*package*/' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+              other: CONST Int type=kotlin.Int value=-2147483648
+          RETURN type=kotlin.Nothing from='public final fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>'
+            CALL 'public final fun recordResult (gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType, correct: kotlin.Boolean, isDraw: kotlin.Boolean, xpEarned: kotlin.Int, timeTakenSec: kotlin.Long, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=kotlin.Any? origin=null
+              $this: GET_FIELD 'FIELD FIELD_FOR_OUTER_THIS name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+              gameType: CONST Null type=com.google.codelab.gamingzone.presentation.games.algebra.GameType? value=null
+              correct: CONST Boolean type=kotlin.Boolean value=false
+              isDraw: CONST Boolean type=kotlin.Boolean value=false
+              xpEarned: CONST Int type=kotlin.Int value=0
+              timeTakenSec: CONST Long type=kotlin.Long value=0
+              $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<Continuation> origin=null
+    VAR name:userId type:kotlin.String [val]
+      CALL 'public final fun initUserIfNeeded$default ($this: com.google.codelab.gamingzone.data.repository.StatsRepository, username: kotlin.String?, $completion: kotlin.coroutines.Continuation<kotlin.String>, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.repository.StatsRepository' type=kotlin.String origin=DEFAULT_DISPATCH_CALL
+        $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:statsRepository type:com.google.codelab.gamingzone.data.repository.StatsRepository visibility:private [final]' type=com.google.codelab.gamingzone.data.repository.StatsRepository origin=null
+          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+        username: COMPOSITE type=kotlin.String? origin=DEFAULT_VALUE
+          CONST Null type=kotlin.String? value=null
+        $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<kotlin.Unit> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.coroutines.Continuation<kotlin.Unit> origin=null
+        $mask0: CONST Int type=kotlin.Int value=1
+        $handler: CONST Null type=kotlin.Any? value=null
+    CALL 'public final fun recordGameResult (userId: kotlin.String, gameName: kotlin.String, isWin: kotlin.Boolean, isDraw: kotlin.Boolean, xpEarned: kotlin.Int, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.repository.StatsRepository' type=kotlin.Unit origin=null
+      $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:statsRepository type:com.google.codelab.gamingzone.data.repository.StatsRepository visibility:private [final]' type=com.google.codelab.gamingzone.data.repository.StatsRepository origin=null
+        receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+      userId: GET_VAR 'val userId: kotlin.String [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.String origin=null
+      gameName: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+        $this: GET_VAR 'gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+      isWin: GET_VAR 'correct: kotlin.Boolean declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Boolean origin=null
+      isDraw: GET_VAR 'isDraw: kotlin.Boolean declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Boolean origin=null
+      xpEarned: GET_VAR 'xpEarned: kotlin.Int declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Int origin=null
+      $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<kotlin.Unit> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.coroutines.Continuation<kotlin.Unit> origin=null
+    COMPOSITE type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun recordResult (gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType, correct: kotlin.Boolean, isDraw: kotlin.Boolean, xpEarned: kotlin.Int, timeTakenSec: kotlin.Long, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.repository.GameRepository'
+        COMPOSITE type=kotlin.Unit origin=null
+          CALL 'public final fun withContext <T> (context: kotlin.coroutines.CoroutineContext, block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope, T of kotlinx.coroutines.BuildersKt.withContext>, $completion: kotlin.coroutines.Continuation<T of kotlinx.coroutines.BuildersKt.withContext>): kotlin.Any? [suspend] declared in kotlinx.coroutines.BuildersKt' type=kotlin.Any origin=null
+            <T>: kotlin.Any
+            context: CALL 'public final fun <get-IO> (): kotlinx.coroutines.CoroutineDispatcher declared in kotlinx.coroutines.Dispatchers' type=kotlinx.coroutines.CoroutineDispatcher origin=GET_PROPERTY
+            block: BLOCK type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              CLASS SUSPEND_LAMBDA CLASS name:<no name provided> modality:FINAL visibility:public/*package*/ superTypes:[kotlin.coroutines.jvm.internal.SuspendLambda; kotlin.jvm.functions.Function2<kotlinx.coroutines.CoroutineScope, kotlin.coroutines.Continuation<kotlin.Any>?, kotlin.Any?>]
+                $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                FIELD name:label type:kotlin.Int visibility:public/*package*/
+                CONSTRUCTOR SUSPEND_LAMBDA visibility:public/*package*/ <> (this$0:com.google.codelab.gamingzone.data.repository.GameRepository, $userId:kotlin.String, $gameType:com.google.codelab.gamingzone.presentation.games.algebra.GameType, $correct:kotlin.Boolean, $timeTakenSec:kotlin.Long, $xpEarned:kotlin.Int, $completion:kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>?) returnType:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> [primary]
+                  VALUE_PARAMETER BOUND_RECEIVER_PARAMETER name:this$0 index:0 type:com.google.codelab.gamingzone.data.repository.GameRepository
+                  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$userId index:1 type:kotlin.String
+                  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$gameType index:2 type:com.google.codelab.gamingzone.presentation.games.algebra.GameType
+                  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$correct index:3 type:kotlin.Boolean
+                  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$timeTakenSec index:4 type:kotlin.Long
+                  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$xpEarned index:5 type:kotlin.Int
+                  VALUE_PARAMETER name:$completion index:6 type:kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>?
+                  BLOCK_BODY
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR 'this$0: com.google.codelab.gamingzone.data.repository.GameRepository declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR '$userId: kotlin.String declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=kotlin.String origin=null
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR '$gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR '$correct: kotlin.Boolean declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=kotlin.Boolean origin=null
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR '$timeTakenSec: kotlin.Long declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=kotlin.Long origin=null
+                    SET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                      value: GET_VAR '$xpEarned: kotlin.Int declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=kotlin.Int origin=null
+                    DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (arity: kotlin.Int, $completion: kotlin.coroutines.Continuation<kotlin.Any?>?) declared in kotlin.coroutines.jvm.internal.SuspendLambda'
+                      arity: CONST Int type=kotlin.Int value=2
+                      $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.<init>' type=kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>? origin=null
+                    BLOCK type=kotlin.Unit origin=null
+                FUN name:invokeSuspend visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>, $result:kotlin.Result<kotlin.Any?>) returnType:kotlin.Any?
+                  overridden:
+                    protected abstract fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in kotlin.coroutines.jvm.internal.SuspendLambda
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                  VALUE_PARAMETER name:$result index:0 type:kotlin.Result<kotlin.Any?>
+                  BLOCK_BODY
+                    VAR name:existing type:com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val]
+                      CALL 'public abstract fun getFor (userId: kotlin.String, gameType: kotlin.String, $completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity?>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                        $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+                          $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+                          $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                    COMPOSITE type=kotlin.Unit origin=null
+                      CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                        p0: CONST String type=kotlin.String value="Data"
+                        p1: CALL 'public final fun valueOf (value: kotlin.Any?): kotlin.String declared in java.lang.String' type=kotlin.String origin=null
+                          value: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                      COMPOSITE type=kotlin.Unit origin=null
+                    RETURN type=kotlin.Nothing from='public final fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>'
+                      WHEN type=kotlin.Any origin=IF
+                        BRANCH
+                          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                              arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                              arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: BLOCK type=kotlin.Unit origin=null
+                            VAR name:entity type:com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity [val]
+                              CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.Int, userId: kotlin.String, gameType: kotlin.String, totalPlayed: kotlin.Int, totalCorrect: kotlin.Int, totalWrong: kotlin.Int, bestStreak: kotlin.Int, lastStreak: kotlin.Int, totalTimeSeconds: kotlin.Long, xpEarned: kotlin.Int, $mask0: kotlin.Int, $marker: kotlin.jvm.internal.DefaultConstructorMarker?) declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity origin=DEFAULT_DISPATCH_CALL
+                                id: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                                  CONST Int type=kotlin.Int value=0
+                                userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+                                  $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                totalPlayed: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                  $this: CALL 'public final fun <get-totalPlayed> (): kotlin.Int declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=kotlin.Int origin=GET_PROPERTY
+                                    $this: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                                  other: CONST Int type=kotlin.Int value=1
+                                totalCorrect: WHEN type=kotlin.Int origin=IF
+                                  BRANCH
+                                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                    then: CONST Int type=kotlin.Int value=1
+                                  BRANCH
+                                    if: CONST Boolean type=kotlin.Boolean value=true
+                                    then: CONST Int type=kotlin.Int value=0
+                                totalWrong: WHEN type=kotlin.Int origin=IF
+                                  BRANCH
+                                    if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                                      $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                        receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                    then: CONST Int type=kotlin.Int value=1
+                                  BRANCH
+                                    if: CONST Boolean type=kotlin.Boolean value=true
+                                    then: CONST Int type=kotlin.Int value=0
+                                bestStreak: WHEN type=kotlin.Int origin=IF
+                                  BRANCH
+                                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                    then: CONST Int type=kotlin.Int value=1
+                                  BRANCH
+                                    if: CONST Boolean type=kotlin.Boolean value=true
+                                    then: CONST Int type=kotlin.Int value=0
+                                lastStreak: WHEN type=kotlin.Int origin=IF
+                                  BRANCH
+                                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                    then: CONST Int type=kotlin.Int value=1
+                                  BRANCH
+                                    if: CONST Boolean type=kotlin.Boolean value=true
+                                    then: CONST Int type=kotlin.Int value=0
+                                totalTimeSeconds: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Long origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                xpEarned: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Int origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                $mask0: CONST Int type=kotlin.Int value=1
+                                $marker: CONST Null type=kotlin.jvm.internal.DefaultConstructorMarker? value=null
+                            CALL 'public abstract fun insert (entity: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=kotlin.Unit origin=null
+                              $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+                                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              entity: GET_VAR 'val entity: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity origin=null
+                              $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: BLOCK type=kotlin.Int origin=null
+                            VAR name:newLastStreak type:kotlin.Int [val]
+                              WHEN type=kotlin.Int origin=IF
+                                BRANCH
+                                  if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                  then: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                    $this: CALL 'public final fun <get-lastStreak> (): kotlin.Int [fake_override] declared in kotlin.Nothing' type=kotlin.Int origin=GET_PROPERTY
+                                      $this: BLOCK type=kotlin.Nothing origin=null
+                                        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                                          <T0>: kotlin.Nothing
+                                          arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                                        CALL 'public final fun throwKotlinNothingValueException (): kotlin.Nothing declared in kotlin.jvm.internal.Intrinsics' type=kotlin.Nothing origin=null
+                                    other: CONST Int type=kotlin.Int value=1
+                                BRANCH
+                                  if: CONST Boolean type=kotlin.Boolean value=true
+                                  then: CONST Int type=kotlin.Int value=0
+                            VAR name:totalPlayed type:kotlin.Int [val]
+                              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                                $this: CALL 'public final fun <get-totalPlayed> (): kotlin.Int [fake_override] declared in kotlin.Nothing' type=kotlin.Int origin=GET_PROPERTY
+                                  $this: BLOCK type=kotlin.Nothing origin=null
+                                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                                      <T0>: kotlin.Nothing
+                                      arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                                    CALL 'public final fun throwKotlinNothingValueException (): kotlin.Nothing declared in kotlin.jvm.internal.Intrinsics' type=kotlin.Nothing origin=null
+                                other: CONST Int type=kotlin.Int value=1
+                            COMPOSITE type=kotlin.Unit origin=null
+                              CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                                p0: CONST String type=kotlin.String value="TAG"
+                                p1: STRING_CONCATENATION type=kotlin.String
+                                  CONST String type=kotlin.String value="recordResult: "
+                                  GET_VAR 'val totalPlayed: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+                              COMPOSITE type=kotlin.Unit origin=null
+                            COMPOSITE type=kotlin.Unit origin=null
+                              CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                                p0: CONST String type=kotlin.String value="TAG"
+                                p1: STRING_CONCATENATION type=kotlin.String
+                                  CONST String type=kotlin.String value="recordResult: "
+                                  CALL 'public final fun <get-totalPlayed> (): kotlin.Int declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=kotlin.Int origin=GET_PROPERTY
+                                    $this: TYPE_OP type=kotlin.Nothing origin=IMPLICIT_CAST typeOperand=kotlin.Nothing
+                                      GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                              COMPOSITE type=kotlin.Unit origin=null
+                            CALL 'public abstract fun updateSummary (userId: kotlin.String, gameType: kotlin.String, played: kotlin.Int, correct: kotlin.Int, wrong: kotlin.Int, lastStreak: kotlin.Int, timeSec: kotlin.Long, xp: kotlin.Int, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=kotlin.Unit origin=null
+                              $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+                                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+                                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              played: GET_VAR 'val totalPlayed: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+                              correct: WHEN type=kotlin.Int origin=IF
+                                BRANCH
+                                  if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                  then: CONST Int type=kotlin.Int value=1
+                                BRANCH
+                                  if: CONST Boolean type=kotlin.Boolean value=true
+                                  then: CONST Int type=kotlin.Int value=0
+                              wrong: WHEN type=kotlin.Int origin=IF
+                                BRANCH
+                                  if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                                    $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                                  then: CONST Int type=kotlin.Int value=1
+                                BRANCH
+                                  if: CONST Boolean type=kotlin.Boolean value=true
+                                  then: CONST Int type=kotlin.Int value=0
+                              lastStreak: GET_VAR 'val newLastStreak: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+                              timeSec: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Long origin=null
+                                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              xp: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Int origin=null
+                                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                              $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                            CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                              p0: CONST String type=kotlin.String value="Data"
+                              p1: STRING_CONCATENATION type=kotlin.String
+                                CONST String type=kotlin.String value="last streak: "
+                                GET_VAR 'val newLastStreak: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+                FUN name:create visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>, value:kotlin.Any?, $completion:kotlin.coroutines.Continuation<kotlin.Nothing>) returnType:kotlin.coroutines.Continuation<kotlin.Unit>
+                  overridden:
+                    public open fun create (value: kotlin.Any?, $completion: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.coroutines.Continuation<kotlin.Unit> declared in kotlin.coroutines.jvm.internal.SuspendLambda
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                  VALUE_PARAMETER name:value index:0 type:kotlin.Any?
+                  VALUE_PARAMETER name:$completion index:1 type:kotlin.coroutines.Continuation<kotlin.Nothing>
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='public final fun create (value: kotlin.Any?, $completion: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.coroutines.Continuation<kotlin.Unit> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>'
+                      CONSTRUCTOR_CALL 'public/*package*/ constructor <init> (this$0: com.google.codelab.gamingzone.data.repository.GameRepository, $userId: kotlin.String, $gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType, $correct: kotlin.Boolean, $timeTakenSec: kotlin.Long, $xpEarned: kotlin.Int, $completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>?) [primary] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        this$0: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $gameType: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $correct: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $timeTakenSec: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Long origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $xpEarned: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Int origin=null
+                          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<kotlin.Nothing> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.create' type=kotlin.coroutines.Continuation<kotlin.Nothing> origin=null
+                FUN name:invoke visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>, p1:kotlinx.coroutines.CoroutineScope, p2:kotlin.coroutines.Continuation<kotlin.Any>?) returnType:kotlin.Any?
+                  overridden:
+                    public abstract fun invoke (p1: P1 of kotlin.jvm.functions.Function2, p2: P2 of kotlin.jvm.functions.Function2): R of kotlin.jvm.functions.Function2 declared in kotlin.jvm.functions.Function2
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                  VALUE_PARAMETER name:p1 index:0 type:kotlinx.coroutines.CoroutineScope
+                  VALUE_PARAMETER name:p2 index:1 type:kotlin.coroutines.Continuation<kotlin.Any>?
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='public final fun invoke (p1: kotlinx.coroutines.CoroutineScope, p2: kotlin.coroutines.Continuation<kotlin.Any>?): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>'
+                      CALL 'public final fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=kotlin.Any? origin=null
+                        $this: TYPE_OP type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=IMPLICIT_CAST typeOperand=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                          CALL 'public final fun create (value: kotlin.Any?, $completion: kotlin.coroutines.Continuation<kotlin.Nothing>): kotlin.coroutines.Continuation<kotlin.Unit> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=kotlin.coroutines.Continuation<kotlin.Unit> origin=null
+                            $this: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                            value: GET_VAR 'p1: kotlinx.coroutines.CoroutineScope declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=kotlinx.coroutines.CoroutineScope origin=null
+                            $completion: GET_VAR 'p2: kotlin.coroutines.Continuation<kotlin.Any>? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=kotlin.coroutines.Continuation<kotlin.Any>? origin=null
+                        $result: CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=kotlin.Result<kotlin.Any?> origin=null
+                          <T>: kotlin.Any?
+                          <R>: kotlin.Result<kotlin.Any?>
+                          v: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:kotlin.Unit visibility:public [final,static]' type=kotlin.Unit origin=null
+                FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]
+                FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]
+                FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]
+                FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]
+                FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]
+                FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]
+                FUN BRIDGE name:invoke visibility:public modality:OPEN <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>, p1:kotlin.Any?, p2:kotlin.Any?) returnType:kotlin.Any?
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+                  VALUE_PARAMETER BRIDGE name:p1 index:0 type:kotlin.Any?
+                  VALUE_PARAMETER BRIDGE name:p2 index:1 type:kotlin.Any?
+                  EXPRESSION_BODY
+                    RETURN type=kotlin.Nothing from='public open fun invoke (p1: kotlin.Any?, p2: kotlin.Any?): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>'
+                      CALL 'public final fun invoke (p1: kotlinx.coroutines.CoroutineScope, p2: kotlin.coroutines.Continuation<kotlin.Any>?): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=kotlin.Any? origin=BRIDGE_DELEGATION
+                        $this: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                        p1: TYPE_OP type=kotlinx.coroutines.CoroutineScope origin=IMPLICIT_CAST typeOperand=kotlinx.coroutines.CoroutineScope
+                          GET_VAR 'p1: kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=kotlin.Any? origin=null
+                        p2: TYPE_OP type=kotlin.coroutines.Continuation<*> origin=IMPLICIT_CAST typeOperand=kotlin.coroutines.Continuation<*>
+                          GET_VAR 'p2: kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invoke' type=kotlin.Any? origin=null
+              CONSTRUCTOR_CALL 'public/*package*/ constructor <init> (this$0: com.google.codelab.gamingzone.data.repository.GameRepository, $userId: kotlin.String, $gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType, $correct: kotlin.Boolean, $timeTakenSec: kotlin.Long, $xpEarned: kotlin.Int, $completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>>?) [primary] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                this$0: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                $userId: GET_VAR 'val userId: kotlin.String [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.String origin=null
+                $gameType: GET_VAR 'gameType: com.google.codelab.gamingzone.presentation.games.algebra.GameType declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                $correct: GET_VAR 'correct: kotlin.Boolean declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Boolean origin=null
+                $timeTakenSec: GET_VAR 'timeTakenSec: kotlin.Long declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Long origin=null
+                $xpEarned: GET_VAR 'xpEarned: kotlin.Int declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.Int origin=null
+                $completion: CONST Null type=kotlin.Nothing? value=null
+            $completion: GET_VAR '$completion: kotlin.coroutines.Continuation<kotlin.Unit> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult' type=kotlin.coroutines.Continuation<kotlin.Unit> origin=null
+          COMPOSITE type=kotlin.Unit origin=null
+
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate$default(FunctionCodegen.kt:42)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethodNode(ClassCodegen.kt:385)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethod(ClassCodegen.kt:402)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generate(ClassCodegen.kt:169)
+	at org.jetbrains.kotlin.backend.jvm.FileCodegen.lower(JvmPhases.kt:41)
+	at org.jetbrains.kotlin.backend.common.phaser.PhaseBuildersKt.makeIrFilePhase$lambda$5(PhaseBuilders.kt:114)
+	at org.jetbrains.kotlin.backend.common.phaser.PhaseBuildersKt$createSimpleNamedCompilerPhase$1.phaseBody(PhaseBuilders.kt:71)
+	at org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase.phaseBody(CompilerPhase.kt:226)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invokeSequential(performByIrFile.kt:62)
+	... 44 more
+Caused by: java.lang.RuntimeException: Exception while generating code for:
+FUN name:invokeSuspend visibility:public modality:FINAL <> ($this:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>, $result:kotlin.Result<kotlin.Any?>) returnType:kotlin.Any?
+  overridden:
+    protected abstract fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in kotlin.coroutines.jvm.internal.SuspendLambda
+  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>
+  VALUE_PARAMETER name:$result index:0 type:kotlin.Result<kotlin.Any?>
+  BLOCK_BODY
+    VAR name:existing type:com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val]
+      CALL 'public abstract fun getFor (userId: kotlin.String, gameType: kotlin.String, $completion: kotlin.coroutines.Continuation<com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity?>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+        $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+          $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+        userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+          receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+        gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+          $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+            receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+        $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+    COMPOSITE type=kotlin.Unit origin=null
+      CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+        p0: CONST String type=kotlin.String value="Data"
+        p1: CALL 'public final fun valueOf (value: kotlin.Any?): kotlin.String declared in java.lang.String' type=kotlin.String origin=null
+          value: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+      COMPOSITE type=kotlin.Unit origin=null
+    RETURN type=kotlin.Nothing from='public final fun invokeSuspend ($result: kotlin.Result<kotlin.Any?>): kotlin.Any? declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>'
+      WHEN type=kotlin.Any origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+              arg1: CONST Null type=kotlin.Nothing? value=null
+          then: BLOCK type=kotlin.Unit origin=null
+            VAR name:entity type:com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity [val]
+              CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.Int, userId: kotlin.String, gameType: kotlin.String, totalPlayed: kotlin.Int, totalCorrect: kotlin.Int, totalWrong: kotlin.Int, bestStreak: kotlin.Int, lastStreak: kotlin.Int, totalTimeSeconds: kotlin.Long, xpEarned: kotlin.Int, $mask0: kotlin.Int, $marker: kotlin.jvm.internal.DefaultConstructorMarker?) declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity origin=DEFAULT_DISPATCH_CALL
+                id: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                  CONST Int type=kotlin.Int value=0
+                userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+                  $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                totalPlayed: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                  $this: CALL 'public final fun <get-totalPlayed> (): kotlin.Int declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                  other: CONST Int type=kotlin.Int value=1
+                totalCorrect: WHEN type=kotlin.Int origin=IF
+                  BRANCH
+                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST Int type=kotlin.Int value=0
+                totalWrong: WHEN type=kotlin.Int origin=IF
+                  BRANCH
+                    if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                      $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                        receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST Int type=kotlin.Int value=0
+                bestStreak: WHEN type=kotlin.Int origin=IF
+                  BRANCH
+                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST Int type=kotlin.Int value=0
+                lastStreak: WHEN type=kotlin.Int origin=IF
+                  BRANCH
+                    if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                    then: CONST Int type=kotlin.Int value=1
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST Int type=kotlin.Int value=0
+                totalTimeSeconds: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Long origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                xpEarned: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                $mask0: CONST Int type=kotlin.Int value=1
+                $marker: CONST Null type=kotlin.jvm.internal.DefaultConstructorMarker? value=null
+            CALL 'public abstract fun insert (entity: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=kotlin.Unit origin=null
+              $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              entity: GET_VAR 'val entity: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity origin=null
+              $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Int origin=null
+            VAR name:newLastStreak type:kotlin.Int [val]
+              WHEN type=kotlin.Int origin=IF
+                BRANCH
+                  if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                  then: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                    $this: CALL 'public final fun <get-lastStreak> (): kotlin.Int [fake_override] declared in kotlin.Nothing' type=kotlin.Int origin=GET_PROPERTY
+                      $this: BLOCK type=kotlin.Nothing origin=null
+                        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                          <T0>: kotlin.Nothing
+                          arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                        CALL 'public final fun throwKotlinNothingValueException (): kotlin.Nothing declared in kotlin.jvm.internal.Intrinsics' type=kotlin.Nothing origin=null
+                    other: CONST Int type=kotlin.Int value=1
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Int type=kotlin.Int value=0
+            VAR name:totalPlayed type:kotlin.Int [val]
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                $this: CALL 'public final fun <get-totalPlayed> (): kotlin.Int [fake_override] declared in kotlin.Nothing' type=kotlin.Int origin=GET_PROPERTY
+                  $this: BLOCK type=kotlin.Nothing origin=null
+                    CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                      <T0>: kotlin.Nothing
+                      arg0: GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+                    CALL 'public final fun throwKotlinNothingValueException (): kotlin.Nothing declared in kotlin.jvm.internal.Intrinsics' type=kotlin.Nothing origin=null
+                other: CONST Int type=kotlin.Int value=1
+            COMPOSITE type=kotlin.Unit origin=null
+              CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                p0: CONST String type=kotlin.String value="TAG"
+                p1: STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="recordResult: "
+                  GET_VAR 'val totalPlayed: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+              COMPOSITE type=kotlin.Unit origin=null
+            COMPOSITE type=kotlin.Unit origin=null
+              CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+                p0: CONST String type=kotlin.String value="TAG"
+                p1: STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="recordResult: "
+                  CALL 'public final fun <get-totalPlayed> (): kotlin.Int declared in com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity' type=kotlin.Int origin=GET_PROPERTY
+                    $this: TYPE_OP type=kotlin.Nothing origin=IMPLICIT_CAST typeOperand=kotlin.Nothing
+                      GET_VAR 'val existing: com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.local1.entity.AdvancedStatsEntity? origin=null
+              COMPOSITE type=kotlin.Unit origin=null
+            CALL 'public abstract fun updateSummary (userId: kotlin.String, gameType: kotlin.String, played: kotlin.Int, correct: kotlin.Int, wrong: kotlin.Int, lastStreak: kotlin.Int, timeSec: kotlin.Long, xp: kotlin.Int, $completion: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Any? [suspend] declared in com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao' type=kotlin.Unit origin=null
+              $this: CALL 'public final fun access$getAdvancedStatsDao$p ($this: com.google.codelab.gamingzone.data.repository.GameRepository): com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao declared in com.google.codelab.gamingzone.data.repository.GameRepository' type=com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao origin=null
+                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:this$0 type:com.google.codelab.gamingzone.data.repository.GameRepository visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.data.repository.GameRepository origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              userId: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$userId type:kotlin.String visibility:public/*package*/ [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              gameType: CALL 'public final fun <get-name> (): kotlin.String [fake_override] declared in com.google.codelab.gamingzone.presentation.games.algebra.GameType' type=kotlin.String origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$gameType type:com.google.codelab.gamingzone.presentation.games.algebra.GameType visibility:public/*package*/ [final]' type=com.google.codelab.gamingzone.presentation.games.algebra.GameType origin=null
+                  receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              played: GET_VAR 'val totalPlayed: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+              correct: WHEN type=kotlin.Int origin=IF
+                BRANCH
+                  if: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                    receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                  then: CONST Int type=kotlin.Int value=1
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Int type=kotlin.Int value=0
+              wrong: WHEN type=kotlin.Int origin=IF
+                BRANCH
+                  if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                    $this: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$correct type:kotlin.Boolean visibility:public/*package*/ [final]' type=kotlin.Boolean origin=null
+                      receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+                  then: CONST Int type=kotlin.Int value=1
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CONST Int type=kotlin.Int value=0
+              lastStreak: GET_VAR 'val newLastStreak: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+              timeSec: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$timeTakenSec type:kotlin.Long visibility:public/*package*/ [final]' type=kotlin.Long origin=null
+                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              xp: GET_FIELD 'FIELD FIELD_FOR_CAPTURED_VALUE name:$xpEarned type:kotlin.Int visibility:public/*package*/ [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+              $completion: GET_VAR '<this>: com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided> origin=null
+            CALL 'public open fun d (p0: @[EnhancedNullability] kotlin.String?, p1: @[EnhancedNullability] kotlin.String): kotlin.Int declared in android.util.Log' type=kotlin.Int origin=null
+              p0: CONST String type=kotlin.String value="Data"
+              p1: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="last streak: "
+                GET_VAR 'val newLastStreak: kotlin.Int [val] declared in com.google.codelab.gamingzone.data.repository.GameRepository.recordResult.<no name provided>.invokeSuspend' type=kotlin.Int origin=null
+
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate$default(FunctionCodegen.kt:42)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethodNode(ClassCodegen.kt:385)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethod(ClassCodegen.kt:402)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generate(ClassCodegen.kt:169)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitClass(ExpressionCodegen.kt:994)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitClass(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.declarations.IrClass.accept(IrClass.kt:72)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:587)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.visitors.IrElementVisitor$DefaultImpls.visitBlock(IrElementVisitor.kt:122)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:407)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlock.accept(IrBlock.kt:18)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.gen(ExpressionCodegen.kt:216)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrCallGenerator.genValueAndPut(IrCallGenerator.kt:48)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall$handleParameter(ExpressionCodegen.kt:610)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:638)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:587)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.visitors.IrElementVisitor$DefaultImpls.visitComposite(IrElementVisitor.kt:125)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitComposite(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitComposite(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrComposite.accept(IrComposite.kt:18)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitReturn(ExpressionCodegen.kt:1045)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitReturn(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrReturn.accept(IrReturn.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:587)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.visitors.IrElementVisitor$DefaultImpls.visitComposite(IrElementVisitor.kt:125)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitComposite(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitComposite(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrComposite.accept(IrComposite.kt:18)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:578)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlockBody.accept(IrBlockBody.kt:20)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.generate(ExpressionCodegen.kt:239)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.doGenerate(FunctionCodegen.kt:121)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:46)
+	... 54 more
+Caused by: java.lang.IllegalStateException: Fake override should have at least one overridden descriptor: FUN FAKE_OVERRIDE name:<get-lastStreak> visibility:public modality:FINAL <> ($this:kotlin.Nothing) returnType:kotlin.Int [fake_override]
+	at org.jetbrains.kotlin.backend.jvm.ir.JvmIrUtilsKt.findSuperDeclaration(JvmIrUtils.kt:413)
+	at org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper.findSuperDeclaration(MethodSignatureMapper.kt:440)
+	at org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper.mapToCallableMethod(MethodSignatureMapper.kt:409)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:599)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.gen(ExpressionCodegen.kt:216)
+	at org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicFunction.genArg(IntrinsicFunction.kt:70)
+	at org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicFunction.loadArguments(IntrinsicFunction.kt:47)
+	at org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicFunction.invoke(IntrinsicFunction.kt:39)
+	at org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod.invoke(IntrinsicMethod.kt:25)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:594)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:1095)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrWhen.accept(IrWhen.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:784)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.declarations.IrVariable.accept(IrVariable.kt:36)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:587)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.visitors.IrElementVisitor$DefaultImpls.visitBlock(IrElementVisitor.kt:122)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:407)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlock.accept(IrBlock.kt:18)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:1095)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrWhen.accept(IrWhen.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitReturn(ExpressionCodegen.kt:1045)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitReturn(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrReturn.accept(IrReturn.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:578)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlockBody.accept(IrBlockBody.kt:20)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.generate(ExpressionCodegen.kt:239)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.doGenerate(FunctionCodegen.kt:121)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:46)
+	... 98 more
+
+

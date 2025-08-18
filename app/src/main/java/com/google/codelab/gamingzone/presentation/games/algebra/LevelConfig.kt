@@ -14,10 +14,10 @@ data class LevelConfig(val level: Int) {
 
     fun allowedOperators(): List<Char> {
         return when {
-            level <= 5 -> listOf('+', '-')
-            level <= 10 -> listOf('+', '-', '*')
-            level <= 15 -> listOf('+', '-', '*', '/')
-            else -> listOf('+', '-', '*', '/')
+            level <= 5 -> listOf('+', '-')                 // only + and - at easy levels
+            level <= 10 -> listOf('+', '-', '×')           // introduce multiplication
+            level <= 15 -> listOf('+', '-', '×', '÷')      // add division
+            else -> listOf('+', '-', '×', '÷')             // keep all for higher levels
         }
     }
 

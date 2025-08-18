@@ -8,6 +8,7 @@ import com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao
 import com.google.codelab.gamingzone.data.local1.dao.LevelProgressDao
 
 import com.google.codelab.gamingzone.data.local1.dao.UserStatsDao
+import com.google.codelab.gamingzone.data.repository.AdvancedStatsRepository
 import com.google.codelab.gamingzone.data.repository.GameRepository
 import com.google.codelab.gamingzone.data.repository.StatsRepository
 import dagger.Module
@@ -43,6 +44,11 @@ object DatabaseModule {
     fun provideAdvancedStatsDao(db: AppDatabase): AdvancedStatsDao = db.advancedStatsDao()
 
     @Provides
+    @Singleton
+    fun provideAdvancedStatsRepository(dao: AdvancedStatsDao): AdvancedStatsRepository =
+        AdvancedStatsRepository(dao)
+
+    @Provides
     fun provideLevelProgressDao(db: AppDatabase): LevelProgressDao = db.levelProgressDao()
 
     @Provides
@@ -51,9 +57,9 @@ object DatabaseModule {
         advancedStatsDao: AdvancedStatsDao,
         // StatsRepository is your existing repository that writes main totals/per-game xp
         statsRepository: StatsRepository,
-        levelProgressDao: LevelProgressDao
+        advancedStatsRepository: AdvancedStatsRepository
     ): GameRepository {
-        return GameRepository(statsRepository, advancedStatsDao)
+        return GameRepository(statsRepository, advancedStatsDao,advancedStatsRepository)
     }
 
 

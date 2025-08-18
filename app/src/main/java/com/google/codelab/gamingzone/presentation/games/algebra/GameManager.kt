@@ -48,33 +48,37 @@ class GameManager {
         val r = config.numberRange()
         val ops = config.allowedOperators()
         val op = ops.random()
-        val a = pickNumber(r)
-        val b = pickNumber(r)
-        val result = when (op) {
-            '+' -> a + b
-            '-' -> a - b
-            '×' -> if (config.allowDecimals()) {
-                a.toDouble() * b.toDouble()
-            } else {
-                a * b
-            }
 
-            '÷' -> if (config.allowDecimals()) {
-                a.toDouble() / b.toDouble()
-            } else {
-                if (b != 0 && a % b == 0) a / b else a
+        val (a, b, result) = when (op) {
+            '+' -> {
+                val x = pickNumber(r)
+                val y = pickNumber(r)
+                Triple(x, y, x + y)
             }
-
-            else -> a + b
+            '-' -> {
+                val x = pickNumber(r)
+                val y = pickNumber(r)
+                val (larger, smaller) = if (x >= y) x to y else y to x
+                Triple(larger, smaller, larger - smaller)
+            }
+            '×' -> {
+                val x = pickNumber(r)
+                val y = pickNumber(r)
+                Triple(x, y, x * y)
+            }
+            '÷' -> {
+                val (num, den) = safeDivisionPair(r)
+                Triple(num, den, num / den)
+            }
+            else -> {
+                val x = pickNumber(r)
+                val y = pickNumber(r)
+                Triple(x, y, x + y)
+            }
         }
 
         val missingPos = Random.nextInt(1, 3) // 1 or 2
-
-        val correctAnswer = when (missingPos) {
-            1 -> a // left operand missing
-            2 -> b // right operand missing
-            else -> a
-        }
+        val correctAnswer = if (missingPos == 1) a else b
 
         return Question.MissingNumber(
             left = a,
@@ -87,31 +91,31 @@ class GameManager {
     }
 
 
+
     private fun genMissingOperator(config: LevelConfig): Question.MissingOperator {
         val r = config.numberRange()
-        val a = pickNumber(r)
-        val b = pickNumber(r).let { if (it == 0) 1 else it }
         val ops = listOf('+', '-', '×', '÷')
         val correctOp = ops.random()
+
+        val (a, b) = when (correctOp) {
+            '÷' -> safeDivisionPair(r)
+            else -> pickNumber(r) to pickNumber(r).let { if (it == 0) 1 else it }
+        }
+
         val result = when (correctOp) {
             '+' -> a + b
             '-' -> a - b
-            '×' -> if (config.allowDecimals()) {
-                a.toDouble() * b.toDouble()
-            } else {
-                a * b
-            }
-
-            '÷' -> if (config.allowDecimals()) a.toDouble() / b.toDouble()
-             else if (b != 0 && a % b == 0) a / b else a
-
+            '×' -> a * b
+            '÷' -> a / b
             else -> a + b
         }
+
         val options = (ops.shuffled().take(3) + correctOp).distinct().shuffled()
+
         return Question.MissingOperator(
             a = a,
             b = b,
-            result = result.toInt(),
+            result = result,
             options = options,
             answer = correctOp,
             difficultyLevel = config.level
@@ -120,61 +124,69 @@ class GameManager {
 
     private fun genTrueFalse(config: LevelConfig): Question.TrueFalse {
         val r = config.numberRange()
-        val a = pickNumber(r)
-        val b = pickNumber(r).let { if (it == 0) 1 else it }
         val op = config.allowedOperators().random()
+
+        val (a, b) = when (op) {
+            '÷' -> safeDivisionPair(r)
+            else -> pickNumber(r) to pickNumber(r).let { if (it == 0) 1 else it }
+        }
+
         val real = when (op) {
             '+' -> a + b
             '-' -> a - b
-            '×' -> if (config.allowDecimals()) {
-                a.toDouble() * b.toDouble()
-            } else {
-                a * b
-            }
-
-            '÷' -> if (config.allowDecimals()) {
-                a.toDouble() / b.toDouble()
-            } else {
-                if (b != 0 && a % b == 0) a / b else a
-            }
-
+            '×' -> a * b
+            '÷' -> a / b
             else -> a + b
         }
+
         val showCorrect = Random.nextBoolean()
-        val shown = if (showCorrect) real else real.toInt() + Random.nextInt(
-            1,
-            6
-        ) * (if (Random.nextBoolean()) 1 else -1)
-        val expr = "$a $op $b = $shown"
+        val shown = if (showCorrect) real
+        else real + Random.nextInt(1, 6) * if (Random.nextBoolean()) 1 else -1
+
         return Question.TrueFalse(
-            expression = expr,
+            expression = "$a $op $b = $shown",
             isCorrect = showCorrect,
             difficultyLevel = config.level
         )
     }
 
+
+    // ✅ FIX: consistent '×' and '÷'
     private fun genReverse(config: LevelConfig): Question.Reverse {
         val r = config.numberRange()
-        val a = pickNumber(r)
-        val b = pickNumber(r).let { if (it == 0) 1 else it }
         val ops = listOf('+', '-', '×', '÷')
         val op = ops.random()
+
+        val (a, b) = when (op) {
+            '÷' -> safeDivisionPair(r)
+            else -> pickNumber(r) to pickNumber(r).let { if (it == 0) 1 else it }
+        }
+
         val res = when (op) {
             '+' -> a + b
             '-' -> a - b
-            '×' -> if (config.allowDecimals()) a.toDouble() * b.toDouble() else a * b
-            '÷' -> if (config.allowDecimals()) a.toDouble() / b.toDouble()
-            else if (b != 0 && a % b == 0) a / b else a
+            '×' -> a * b
+            '÷' -> a / b
             else -> a + b
         }
+
         val options = (ops.shuffled().take(3) + op).distinct().shuffled()
+
         return Question.Reverse(
             a = a,
             b = b,
-            result = res.toInt(),
+            result = res,
             options = options,
             answer = op,
             difficultyLevel = config.level
         )
     }
+
+    private fun safeDivisionPair(range: IntRange): Pair<Int, Int> {
+        val b = pickNumber(range).let { if (it == 0) 1 else it }
+        val a = b * pickNumber(range)
+        return a to b
+    }
+
+
 }

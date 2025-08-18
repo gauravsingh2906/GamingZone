@@ -17,6 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamingZone"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8017073778025924~8424443949" /> <!-- REPLACE with your AdMob App ID -->
+
+        <activity
+            android:name="com.facebook.ads.AudienceNetworkActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

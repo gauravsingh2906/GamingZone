@@ -133,4 +133,8 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+
+    implementation("com.facebook.android:audience-network-sdk:6.14.0")
+    implementation("com.google.android.gms:play-services-ads:23.0.0")
 }

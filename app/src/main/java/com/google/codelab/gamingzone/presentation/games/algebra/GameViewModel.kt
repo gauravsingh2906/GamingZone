@@ -28,7 +28,7 @@ class GameViewModel @Inject constructor(
     private val _level = MutableStateFlow(1)
     val level: StateFlow<Int> = _level
 
-    private val _question = MutableStateFlow<Question?>(null)
+    private val _question = MutableStateFlow<Question?>(manager.nextQuestion(1))
     val question: StateFlow<Question?> = _question
 
     private val _score = MutableStateFlow(0)
