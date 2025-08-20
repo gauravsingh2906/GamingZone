@@ -24,7 +24,7 @@ interface StatsRepository {
     suspend fun initUserIfNeeded(username: String?="Player"): String
 
     suspend fun updateUsername(userId: String, newUsername: String)
-    suspend fun updateAvatar(userId: String, newAvatarUri: String)
+    suspend fun updateAvatar(userId: String, newAvatarUri: Int)
     suspend fun updateCoins(userId: String, newCoins: Int)
 
     suspend fun getProfile(userId: String): OverallProfileEntity?

@@ -1,6 +1,7 @@
 package com.google.codelab.gamingzone.data.local2.repository
 
 import android.util.Log
+import com.google.codelab.gamingzone.R
 import com.google.codelab.gamingzone.data.local1.entity.TotalStatsEntity
 import com.google.codelab.gamingzone.data.local1.entity.UserEntity
 import com.google.codelab.gamingzone.data.local2.dao.OverallProfileDao
@@ -97,7 +98,18 @@ class StatsRepositoryImpl @Inject constructor(
 
 
         val newId = UUID.randomUUID().toString()
-        val us = OverallProfileEntity(userId = newId, username = username ?: "Player1")
+
+        val adjectives = listOf("Cool", "Silent", "Funky", "Smart", "Dark", "Fire")
+        val nouns = listOf("Ninja", "Cat", "Wizard", "Dragon", "Knight", "Fox")
+        val number = (100..999).random()
+
+        val username = "${adjectives.random()}${nouns.random()}_$number"
+
+        var defaultAvatarId = listOf<Int>(R.drawable.avatar_1,R.drawable.avatar_4,R.drawable.avatar_2,R.drawable.avatar_5,R.drawable.avatar_6,R.drawable.avatar_7)
+        val defaultUnlockedAvatars = defaultAvatarId.random()
+
+
+        val us = OverallProfileEntity(userId = newId, username = username, avatarUri = defaultUnlockedAvatars)
         val user = UserEntity(userId = newId, username = username)
         overallProfileDao.insertProfile(us)
         // create default total stats row
@@ -111,7 +123,7 @@ class StatsRepositoryImpl @Inject constructor(
         overallProfileDao.updateProfile(profile.copy(username = newUsername))
     }
 
-    override suspend fun updateAvatar(userId: String, newAvatarUri: String) {
+    override suspend fun updateAvatar(userId: String, newAvatarUri: Int) {
         val profile = overallProfileDao.getProfile(userId) ?: return
         overallProfileDao.updateProfile(profile.copy(avatarUri = newAvatarUri))
     }

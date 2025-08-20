@@ -3,6 +3,7 @@ package com.google.codelab.gamingzone.presentation.profile_stats
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.codelab.gamingzone.R
 import com.google.codelab.gamingzone.data.local2.entity.OverallProfileEntity
 import com.google.codelab.gamingzone.data.local2.entity.PerGameStatsEntity
 import com.google.codelab.gamingzone.data.local2.repository.StatsRepository
@@ -30,6 +31,17 @@ class StatsViewModel @Inject constructor(
     //    init {
 //        loadProfile(userId = "c97f320d-4681-4e07-aeca-f305ea33d7e9")
 //    }'
+
+//    val adjectives = listOf("Cool", "Silent", "Funky", "Smart", "Dark", "Fire")
+//    val nouns = listOf("Ninja", "Cat", "Wizard", "Dragon", "Knight", "Fox")
+//    val number = (100..999).random()
+//
+//    val username = "${adjectives.random()}${nouns.random()}_$number"
+
+    var defaultAvatarId = listOf<Int>(R.drawable.avatar_1,R.drawable.ic_star1)
+    val defaultUnlockedAvatars = defaultAvatarId
+
+
     init {
         // create user row if needed and set _userId
         viewModelScope.launch {
@@ -66,7 +78,7 @@ class StatsViewModel @Inject constructor(
         statsRepo.updateUsername(userId, username)
     }
 
-    fun changeAvatar(userId: String, avatarUri: String) = viewModelScope.launch {
+    fun changeAvatar(userId: String, avatarUri:Int) = viewModelScope.launch {
         statsRepo.updateAvatar(userId, avatarUri)
     }
 }

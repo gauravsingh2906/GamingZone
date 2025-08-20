@@ -161,7 +161,7 @@ class GameViewModel @Inject constructor(
             }
             if (_timeRemaining.value <= 0 || !_gameOver.value) {
                 // Time is up
-               // endGame()
+              //  endGame()
             }
         }
     }
@@ -200,6 +200,12 @@ class GameViewModel @Inject constructor(
         val baseXp = q.difficultyLevel * 5
         val bonus = if (correct) (LevelConfig(q.difficultyLevel).xpForCorrectBase() / 2) else 0
         val xp = baseXp + bonus
+
+        val adjectives = listOf("Cool", "Silent", "Funky", "Smart", "Dark", "Fire")
+        val nouns = listOf("Ninja", "Cat", "Wizard", "Dragon", "Knight", "Fox")
+        val number = (100..999).random()
+
+        val username = "${adjectives.random()}${nouns.random()}_$number"
 
 
 

@@ -137,4 +137,7 @@ dependencies {
 
     implementation("com.facebook.android:audience-network-sdk:6.14.0")
     implementation("com.google.android.gms:play-services-ads:23.0.0")
+    implementation("nl.dionsegijn:konfetti-compose:2.0.2")
+    implementation("androidx.media:media:1.5.0")
+// for media playback (optional)
 }

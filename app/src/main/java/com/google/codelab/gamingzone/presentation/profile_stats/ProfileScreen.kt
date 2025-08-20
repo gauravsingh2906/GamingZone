@@ -19,13 +19,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -74,7 +70,7 @@ fun ProfileScreen(
                 .clickable { onChangeAvatar() },
             contentAlignment = Alignment.Center
         ) {
-            if (!profile.avatarUri.isNullOrBlank()) {
+            if (profile.avatarUri.toString().isNotEmpty()) {
                 Image(
                     painter = rememberAsyncImagePainter(profile.avatarUri),
                     contentDescription = "Avatar",
@@ -110,13 +106,18 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         // XP & Coins chips
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             StatChip(icon = "⭐", label = "XP", value = profile.totalXP.toString())
             StatChip(icon = "💰", label = "Coins", value = profile.coins.toString())
         }
+
+        Spacer(Modifier.height(20.dp))
+
+        // 🔥 NEW: Level carousel with XP progress
+        LevelCarousel(profile = profile)
 
         Spacer(Modifier.height(20.dp))
 
@@ -197,6 +198,51 @@ fun StatChip(icon: String, label: String, value: String) {
         }
     }
 }
+
+@Composable
+fun LevelCarousel(profile: OverallProfileEntity) {
+    val currentLevel = profile.overallHighestLevel
+    val currentXP = profile.totalXP
+    val xpForNextLevel = (currentLevel + 1) * 500  // example XP rule
+    val progress = currentXP.toFloat() / xpForNextLevel.toFloat()
+    val xpNeeded = xpForNextLevel - currentXP
+
+    androidx.compose.foundation.lazy.LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        item {
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = Color.White.copy(alpha = 0.95f),
+                tonalElevation = 8.dp,
+                shadowElevation = 12.dp,
+                modifier = Modifier
+                    .width(250.dp)
+                    .height(140.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("LEVEL $currentLevel", fontWeight = FontWeight.Bold, color = Color(0xFF2C1A4A))
+                    Spacer(Modifier.height(8.dp))
+                    androidx.compose.material3.LinearProgressIndicator(
+                        progress = progress.coerceIn(0f, 1f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(50)),
+                        color = Color(0xFF6A8BFF)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text("Earn $xpNeeded XP to reach Level ${currentLevel + 1}", fontSize = 14.sp, color = Color(0xFF5B4D7B))
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun SectionCard(title: String, content: @Composable ColumnScope.() -> Unit) {

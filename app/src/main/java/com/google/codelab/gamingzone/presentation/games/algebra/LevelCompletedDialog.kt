@@ -223,8 +223,9 @@ fun GameOverDialog(
                     Button(
                         onClick = onRetry,
                         shape = RoundedCornerShape(16.dp)
-                    ) { Text("Retry 🔄") }
-
+                    ) {
+                        Text("Retry 🔄")
+                    }
                     TextButton(onClick = onHome) { Text("Home") }
                 }
                 Spacer(Modifier.height(8.dp))

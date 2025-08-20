@@ -4,6 +4,7 @@ package com.google.codelab.gamingzone.presentation.games.algebra
 import android.app.Activity
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -14,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -26,13 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.codelab.gamingzone.GoogleRewardedAdManager
-
+import com.airbnb.lottie.compose.*
+import com.google.codelab.gamingzone.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun MathAlgebraGameScreen(
@@ -60,9 +65,10 @@ fun MathAlgebraGameScreen(
 
     val googleAdManager = remember { GoogleRewardedAdManager(context) }
     // Facebook ad manager
-  //  val facebookAdManager = remember { FacebookRewardedAdManager(context) }
+    //  val facebookAdManager = remember { FacebookRewardedAdManager(context) }
 
-    val adMobAdUnitId = "ca-app-pub-3940256099942544/5224354917"         // Your AdMob rewarded ad unit
+    val adMobAdUnitId =
+        "ca-app-pub-3940256099942544/5224354917"         // Your AdMob rewarded ad unit
     val facebookPlacementId = "xxxxxxxx"               // Your FB placement ID
 
     var showHint by remember { mutableStateOf(false) }
@@ -77,6 +83,15 @@ fun MathAlgebraGameScreen(
 
     LaunchedEffect(Unit) { viewModel.startNext() }
 
+    var showAnimation by remember { mutableStateOf(false) }
+
+    var showCompletedDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(levelCompleted) {
+        showAnimation = true
+    }
+
+
     Box(
         modifier = Modifier.fillMaxSize()
 //            .padding(16.dp)
@@ -90,18 +105,6 @@ fun MathAlgebraGameScreen(
                 onRetry = { viewModel.startGame() },
                 onHome = onBack
             )
-        } else if (levelCompleted) {
-            LevelCompletedDialog(level = level, earnedScore = score, onNextLevel = {
-                viewModel.levelCompleted() // unlock in Room
-                viewModel.setLevel(level + 1)
-                viewModel.startGame()
-            }, onReplay = {
-                viewModel.setLevel(level)
-                viewModel.startGame()
-            }, onHome = {
-                viewModel.levelCompleted()
-                onBack()
-            })
         } else {
             Box(
                 modifier = Modifier
@@ -231,7 +234,7 @@ fun MathAlgebraGameScreen(
                     // Bottom actions
                     BottomBar(
                         onHint = {
-                          //  feedback = "Hint: think step-by-step!"
+                            //  feedback = "Hint: think step-by-step!"
                             googleAdManager.loadRewardedAd(adMobAdUnitId) { loaded ->
                                 if (loaded && activity != null) {
                                     googleAdManager.showRewardedAd(
@@ -249,6 +252,36 @@ fun MathAlgebraGameScreen(
                     )
                 }
 
+                if (levelCompleted && showAnimation) {
+                    GameWinAnimation(
+                        onAnimationFinished = {
+                            showAnimation = false
+                            showCompletedDialog = true
+                        }
+                    )
+                }
+
+                if (levelCompleted && showCompletedDialog && !showAnimation) {
+                    LevelCompletedDialog(
+                        level = level,
+                        earnedScore = score,
+                        onNextLevel = {
+                            viewModel.levelCompleted() // unlock in Room
+                            viewModel.setLevel(level + 1)
+                            viewModel.startGame()
+                            // naviagteToGameScreen(viewModel.level.value)
+                        },
+                        onReplay = {
+                            viewModel.setLevel(level)
+                            viewModel.startGame()
+                        },
+                        onHome = {
+                            viewModel.levelCompleted()
+                            onBack()
+                        }
+                    )
+                }
+
                 if (showHint) {
                     Text(
                         "Hint: think step-by-step!",
@@ -263,6 +296,40 @@ fun MathAlgebraGameScreen(
     }
 }
 
+
+@Composable
+fun GameWinAnimation(
+    onAnimationFinished: () -> Unit = {}
+) {
+
+        val composition by rememberLottieComposition(
+            LottieCompositionSpec.RawRes(R.raw.winner) // put your Lottie JSON in res/raw
+        )
+        val progress by animateLottieCompositionAsState(
+            composition,
+            iterations = 1, // play once
+            speed = 1.2f,
+            restartOnPlay = false
+        )
+
+
+
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.fillMaxSize().background(Color.Transparent)
+        )
+
+
+        LaunchedEffect(progress) {
+            if (progress >= 1f) {
+                onAnimationFinished()
+            }
+
+        }
+
+
+}
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -375,7 +442,8 @@ private fun MissingNumberCard(
             value = textAnswer,
             onValueChange = { if (it.length <= 6) onTextChange(it.filter { ch -> ch.isDigit() || ch == '-' }) },
             label = { Text("Enter the missing number") },
-            singleLine = true
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
         Button(
             onClick = { textAnswer.toIntOrNull()?.let(onSubmit) },
@@ -511,7 +579,9 @@ private fun FlowRowButtons(options: List<String>, onClick: (String) -> Unit) {
         options.take(maxPerRow).forEach { text ->
             Button(
                 onClick = { onClick(text) }, shape = RoundedCornerShape(16.dp)
-            ) { Text(text, fontSize = 18.sp) }
+            ) {
+                Text(text, fontSize = 18.sp)
+            }
         }
     }
 }

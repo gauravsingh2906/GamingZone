@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -17,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -62,6 +64,7 @@ import com.google.codelab.gamingzone.presentation.profile_stats.ProfileScreen
 import com.google.codelab.gamingzone.presentation.profile_stats.StatsViewModel
 import com.google.codelab.gamingzone.tobe.TubeScreen
 import com.google.codelab.gamingzone.tobe.TubeViewModel
+import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -200,6 +203,9 @@ fun NavGraph(
 
             Log.d("Nav Level",maxUnlocked.toString())
 
+            val scaffoldState = rememberScaffoldState()
+            val coroutineScope = rememberCoroutineScope()
+
             LevelBasedScreen(
                 onLevelClick = { level ->
                     Log.e("Nav Level Inside", "nav level inside$level")
@@ -208,7 +214,7 @@ fun NavGraph(
                         navController.navigate(Routes.AlgebraGameScreen(level))
                     }
                 },
-                maxUnlockedLevel = maxUnlocked
+                maxUnlockedLevel = maxUnlocked,
             )
         }
 

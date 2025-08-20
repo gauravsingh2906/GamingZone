@@ -50,10 +50,6 @@ import androidx.compose.ui.unit.sp
 import java.time.format.TextStyle
 import kotlin.io.path.Path
 
-data class LevelItem(
-    val levelNumber: Int,
-    val isLocked: Boolean
-)
 
 @Composable
 fun LevelBasedScreen(
@@ -108,69 +104,6 @@ fun LevelBasedScreen(
     }
 }
 
-
-@Composable
-fun LevelItem(
-    level: Int,
-    unlocked: Boolean,
-    onClick: () -> Unit,
-    justUnlocked: Boolean = false, // pass true when a level is newly unlocked
-) {
-    val backgroundColors = listOf(
-        Color(0xFF4CAF50), // Green
-        Color(0xFF2196F3), // Blue
-        Color(0xFFFF9800), // Orange
-        Color(0xFFE91E63)  // Pink
-    )
-    val backgroundColor =
-        if (unlocked) backgroundColors[level % backgroundColors.size] else Color(0xFFBDBDBD)
-    val borderColor = if (unlocked) Color(0xFF2E7D32) else Color.Gray
-
-    // Animation for "just unlocked"
-    val scale by animateFloatAsState(
-        targetValue = if (justUnlocked) 1.2f else 1f,
-        animationSpec = tween(400, easing = LinearOutSlowInEasing)
-    )
-
-    val glowAlpha by infiniteTransitionGlowing(justUnlocked)
-
-    Box(
-        modifier = Modifier
-            .size(80.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                shadowElevation = if (unlocked) 12f else 2f
-            }
-            .clip(RoundedCornerShape(20.dp))
-            .background(backgroundColor.copy(alpha = 1f - glowAlpha * 0.2f))
-            .border(
-                width = 3.dp,
-                color = if (unlocked) Color.White else Color.DarkGray,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clickable(enabled = unlocked, onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        if (unlocked) {
-            Text(
-                text = "$level",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontSize = 20.sp
-                )
-            )
-        } else {
-            androidx.compose.material3.Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = null,
-                tint = Color.White
-            )
-        }
-    }
-}
-
 @Composable
 fun infiniteTransitionGlowing(shouldGlow: Boolean): State<Float> {
     val infiniteTransition = rememberInfiniteTransition()
@@ -184,27 +117,6 @@ fun infiniteTransitionGlowing(shouldGlow: Boolean): State<Float> {
     )
 }
 
-
-@Composable
-fun LevelCard(level: LevelItem, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .aspectRatio(1f)
-            .background(
-                if (level.isLocked) Color.Gray.copy(alpha = 0.4f) else MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(enabled = !level.isLocked) { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Level ${level.levelNumber}",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-    }
-}
 
 @Composable
 fun LevelItems(level: Int, isUnlocked: Boolean, isReward: Boolean,onClick: () -> Unit) {

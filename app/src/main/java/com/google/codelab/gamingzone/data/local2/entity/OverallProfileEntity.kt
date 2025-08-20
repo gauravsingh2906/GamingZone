@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class OverallProfileEntity(
     @PrimaryKey var userId: String,
     val username: String = "Player",
-    val avatarUri: String? = null,          // URI string/path to avatar image
+    val avatarUri: Int? = null,          // URI string/path to avatar image
     val coins: Int = 0,                     // coins to spend on avatar/name customizations
     val totalGamesPlayed: Int = 0,
     val totalWins: Int = 0,
