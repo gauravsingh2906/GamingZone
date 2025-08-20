@@ -4,8 +4,11 @@ package com.google.codelab.gamingzone.presentation.games.algebra
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.google.codelab.gamingzone.data.local2.repository.StatsRepository
 import com.google.codelab.gamingzone.data.repository.GameRepository
 import com.google.codelab.gamingzone.data.repository.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +23,12 @@ import javax.inject.Inject
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val gameRepository: GameRepository,
-    private val levelRepository: LevelRepository
+    private val levelRepository: LevelRepository,
+    private val statsRepository: StatsRepository,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+  //  val userId = savedStateHandle.toRoute<>()
 
     private val manager = GameManager()
 
@@ -202,7 +209,22 @@ class GameViewModel @Inject constructor(
         if (correct) {
             _score.value += xp
             viewModelScope.launch {
-                gameRepository.recordResult(q.gameType, true, false, xp, timeSec)
+             //   gameRepository.recordResult(q.gameType, true, false, xp, timeSec)
+
+                statsRepository.updateGameResult(
+                    userId = statsRepository.initUserIfNeeded(),
+                    gameName = "algebra",
+                    levelReached = currentLevel,
+                    won = true,
+                    xpGained = xp,
+                    currentStreak =10 ,
+                    bestStreak = 4,
+                    hintsUsed =3 ,
+                    timeSpentSeconds = timeSec
+                )
+
+
+
 
       //          levelRepository.unlockNextLevelIfNeeded(currentLevel+1)
             }
@@ -216,11 +238,22 @@ class GameViewModel @Inject constructor(
         } else {
             // if not correct do the game over
             viewModelScope.launch {
-                gameRepository.recordResult(q.gameType,
-                    correct = false,
-                    isDraw = false,
-                    xpEarned = xp,
-                    timeTakenSec = timeSec
+//                gameRepository.recordResult(q.gameType,
+//                    correct = false,
+//                    isDraw = false,
+//                    xpEarned = xp,
+//                    timeTakenSec = timeSec
+//                )
+                statsRepository.updateGameResult(
+                    userId = statsRepository.initUserIfNeeded(),
+                    gameName = "algebra",
+                    levelReached = currentLevel,
+                    won = false,
+                    xpGained = xp,
+                    currentStreak =10 ,
+                    bestStreak = 4,
+                    hintsUsed =3 ,
+                    timeSpentSeconds = timeSec
                 )
             }
             endGame()

@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.google.codelab.gamingzone.SplashScreen
+import com.google.codelab.gamingzone.data.local2.entity.OverallProfileEntity
 import com.google.codelab.gamingzone.data.model.GameResult
 import com.google.codelab.gamingzone.presentation.game_detail_screen.DifficultySelectionScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameDetailScreen
@@ -57,6 +58,8 @@ import com.google.codelab.gamingzone.presentation.navigation.Routes.ProfileScree
 import com.google.codelab.gamingzone.presentation.profile_screen.ProfileScreener
 
 import com.google.codelab.gamingzone.presentation.profile_screen.UserStatsViewModel
+import com.google.codelab.gamingzone.presentation.profile_stats.ProfileScreen
+import com.google.codelab.gamingzone.presentation.profile_stats.StatsViewModel
 import com.google.codelab.gamingzone.tobe.TubeScreen
 import com.google.codelab.gamingzone.tobe.TubeViewModel
 
@@ -289,6 +292,7 @@ fun NavGraph(
 
             val viewModel: SudokuViewModel = hiltViewModel()
             val userStatsViewModel: UserStatsViewModel = hiltViewModel()
+            val newViewModel:StatsViewModel = hiltViewModel()
             val state = viewModel.state
 
 
@@ -306,6 +310,17 @@ fun NavGraph(
                                   xpEarned = state.value.xpEarned,
                               )
                             userStatsViewModel.advancedStats("sudoku")
+                            newViewModel.updateGameAndProfile(
+                                userId = newViewModel.userId.value ?: "name",
+                                gameName = "sudoku",
+                                level = 1,
+                                won = true,
+                                xp = state.value.xpEarned,
+                                streak = 1,
+                                bestStreak = 3,
+                                hints = viewModel.state.value.hintsUsed,
+                                timeSec = viewModel.state.value.elapsedTime.toLong()
+                            )
 //                            profileViewModel.recordGameResult(
 //                                gameName = "sudoku",
 //                                result = GameResult(
@@ -332,6 +347,17 @@ fun NavGraph(
                                 xpEarned = state.value.xpEarned,
                             )
                             userStatsViewModel.advancedStats("sudoku")
+                            newViewModel.updateGameAndProfile(
+                                userId = newViewModel.userId.value ?: "name",
+                                gameName = "sudoku",
+                                level = 1,
+                                won = false,
+                                xp = state.value.xpEarned,
+                                streak = 1,
+                                bestStreak = 3,
+                                hints = viewModel.state.value.hintsUsed,
+                                timeSec = viewModel.state.value.elapsedTime.toLong()
+                            )
 //                            profileViewModel.recordGameResult(
 //                                gameName = "sudoku",
 //                                result = GameResult(
@@ -530,7 +556,7 @@ fun NavGraph(
 
         composable<Routes.LeaderBoardScreen> {
 
-            val viewModel = hiltViewModel<TubeViewModel>()
+         //   val viewModel = hiltViewModel<TubeViewModel>()
 
             // val viewModel = hiltViewModel<MathPathViewModel>()
             //     val state = viewModel.state
@@ -544,7 +570,26 @@ fun NavGraph(
 //                onProfileClick = { },
 //                onLeaderboardClick = { }
 //            )
-            TubeScreen()
+         //   TubeScreen()
+
+            val statsViewModel: StatsViewModel = hiltViewModel()
+            val profile by statsViewModel.profile.collectAsState() // Use Flow/LiveData/State
+            val perGameStats by statsViewModel.perGameStats.collectAsState()
+
+            val userId = statsViewModel.userId.value
+            val us = "d41e5130-eacf-401a-bd03-e0cb4c0c9a96"
+            Log.d("User",userId.toString())
+
+//            LaunchedEffect(Unit) {
+//                statsViewModel.loadProfile(userId ?: "123")
+//            }
+
+            ProfileScreen(
+                profile = profile ?: OverallProfileEntity(userId = "1\tc97f320d-4681-4e07-aeca-f305ea33d7e9\tsudoku\t2\t0\t2\t0\t20\t1\t3\t1\t6\t20"),
+                perGameStats = perGameStats,
+                onChangeAvatar = { /* Launch avatar dialog */ },
+                onChangeUsername = { /* Launch edit username */ }
+            )
         }
 
 

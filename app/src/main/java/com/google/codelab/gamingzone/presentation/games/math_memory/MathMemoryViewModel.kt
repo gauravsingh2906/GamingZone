@@ -9,19 +9,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.codelab.gamingzone.data.local2.entity.PerGameStatsEntity
+import com.google.codelab.gamingzone.data.local2.repository.StatsRepository
 import com.google.codelab.gamingzone.presentation.home_screen.SampleGames.Default
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Random
 import javax.inject.Inject
-
+import kotlin.math.abs
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @HiltViewModel
 class MathMemoryViewModel @Inject constructor(
     private val levelManager: LevelManager,
-    private val repo: MathMemoryRepository
+    private val repo: MathMemoryRepository,
+    private val statsRepo: StatsRepository,
+    private val mathMemoryStatsRepo: MathMemoryStatsRepository,
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf(
@@ -43,6 +50,12 @@ class MathMemoryViewModel @Inject constructor(
     // Track which theme was just unlocked (for display)
     var newlyUnlockedThemeName by mutableStateOf<String?>(null)
         private set
+
+    private val _mathStats = MutableStateFlow<PerGameStatsEntity?>(null)
+    val mathStats: StateFlow<PerGameStatsEntity?> = _mathStats
+
+
+
 
 
     init {
@@ -108,8 +121,8 @@ class MathMemoryViewModel @Inject constructor(
 
     private fun generateAnswerOptions(correct: Int): List<AnswerOption> {
         val options = mutableSetOf(correct)
-        val rand = java.util.Random()
-        val maxOffset = maxOf(3, kotlin.math.abs(correct) / 3)
+        val rand = Random()
+        val maxOffset = maxOf(3, abs(correct) / 3)
         val minCandidate = 1
         var attempts = 0
 
@@ -248,6 +261,49 @@ class MathMemoryViewModel @Inject constructor(
             }
         }
     }
+
+
+
+    fun onLevelResultAndSaveStats(
+        userId: String,
+        isCorrect: Boolean,
+        hintsUsed: Int,
+        timeSpentSeconds: Long
+    ) = viewModelScope.launch {
+        val levelNum = _uiState.value.game.level.number
+        // You may cache streaks/current streak locally, or pull from stats repo if needed
+        val previousStats = mathMemoryStatsRepo.getStats(userId)
+        Log.d("StatsUpdate", "Previous stats: $previousStats")
+        val currentStreak = if (isCorrect) (previousStats?.currentStreak ?: 0) + 1 else 0
+        val bestStreak = maxOf(currentStreak, previousStats?.bestStreak ?: 0)
+        val xpEarned = getXpForLevel(levelNum, currentStreak)
+
+
+        statsRepo.updateGameResult(
+            levelReached = levelNum,
+            won = isCorrect,
+            xpGained = xpEarned,
+            currentStreak = currentStreak,
+            bestStreak = bestStreak,
+            hintsUsed = hintsUsed,
+            timeSpentSeconds = timeSpentSeconds,
+            gameName = "math_memory",
+            userId = userId
+        )
+
+//        mathMemoryStatsRepo.recordMathResult(
+//            userId = userId,
+//            level = levelNum,
+//            isWin = isCorrect,
+//            xp = xpEarned,
+//            streak = currentStreak,
+//            bestStreak = bestStreak,
+//            hintsUsed = hintsUsed,
+//            timeSpentSec = timeSpentSeconds
+//        )
+    }
+
+
 
     // Call this after unlocking a new theme (in your unlock logic)
     fun onThemeUnlocked(themeName: String) {

@@ -26,12 +26,14 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.codelab.gamingzone.presentation.home_screen.SampleGames.Default
+import com.google.codelab.gamingzone.presentation.profile_stats.StatsViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun MathMemoryMixScreen(
-    viewModel: MathMemoryViewModel = hiltViewModel()
+    viewModel: MathMemoryViewModel = hiltViewModel(),
+    statsViewModel: StatsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState
     val answerOptions by viewModel.answerOptions
@@ -57,6 +59,39 @@ fun MathMemoryMixScreen(
     LaunchedEffect(Unit) {
         viewModel.loadThemes()
     }
+
+    val gameLevel = uiState.game.level.number
+    val showResult = uiState.game.showResult
+    val isCorrect = uiState.game.isCorrect
+
+
+
+    // Add a remember key that resets every round
+    var alreadySavedThisResult by remember(uiState.game.level.number, uiState.game.showResult) { mutableStateOf(false) }
+
+    val mathStats by viewModel.mathStats.collectAsState()
+
+
+    var lastSavedLevel by remember { mutableStateOf<Int?>(null) }
+
+    if (showResult && lastSavedLevel != gameLevel) {
+        LaunchedEffect(gameLevel, showResult) {
+            Log.d("StatsUpdate", "Saving stats for level $gameLevel")
+            viewModel.onLevelResultAndSaveStats(
+                userId = statsViewModel.userId.value ?: "123",
+                isCorrect = isCorrect,
+                hintsUsed = 2,
+                timeSpentSeconds = 54
+            )
+            lastSavedLevel = gameLevel
+        }
+    }
+
+
+
+//    LaunchedEffect(Unit) {
+     //   viewModel.loadMathStats(userId)
+//    }
 
     // Show unlock animation only if a new theme just unlocked and not dismissed
 //    if (showUnlockAnimation && !themeName.isNullOrEmpty()) {
@@ -172,6 +207,7 @@ fun MathMemoryMixScreen(
 
             // Result feedback
             if (phase == "RESULT") {
+
                 Spacer(Modifier.height(10.dp))
                 ResultSection(
                     isCorrect = uiState.game.isCorrect,
