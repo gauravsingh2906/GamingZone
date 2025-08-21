@@ -41,6 +41,18 @@ class GameViewModel @Inject constructor(
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score
 
+    private val _currentStreak = MutableStateFlow(0)
+    val currentStreak: StateFlow<Int> = _currentStreak
+
+    private val _bestStreak = MutableStateFlow(0)
+    val bestStreak: StateFlow<Int> = _bestStreak
+
+    private val _hintsUsed = MutableStateFlow(0)
+    val hintsUsed: StateFlow<Int> = _hintsUsed
+
+    private val _bestScore = MutableStateFlow(0)
+    val bestScore: StateFlow<Int> = _bestScore
+
     private val _gameOver = MutableStateFlow(false)
     val gameOver: StateFlow<Boolean> = _gameOver
 
@@ -138,6 +150,8 @@ class GameViewModel @Inject constructor(
     fun startGame() {
         _score.value = 0
         _level.value = currentLevel
+        _currentStreak.value = 0
+        _hintsUsed.value = 0
         _gameOver.value = false
         startNext()
     }
@@ -201,12 +215,6 @@ class GameViewModel @Inject constructor(
         val bonus = if (correct) (LevelConfig(q.difficultyLevel).xpForCorrectBase() / 2) else 0
         val xp = baseXp + bonus
 
-        val adjectives = listOf("Cool", "Silent", "Funky", "Smart", "Dark", "Fire")
-        val nouns = listOf("Ninja", "Cat", "Wizard", "Dragon", "Knight", "Fox")
-        val number = (100..999).random()
-
-        val username = "${adjectives.random()}${nouns.random()}_$number"
-
 
 
         // persist asynchronously
@@ -214,6 +222,12 @@ class GameViewModel @Inject constructor(
 
         if (correct) {
             _score.value += xp
+
+            _currentStreak.value += 1
+            if (_currentStreak.value > _bestStreak.value) {
+                _bestStreak.value = _currentStreak.value
+            }
+
             viewModelScope.launch {
              //   gameRepository.recordResult(q.gameType, true, false, xp, timeSec)
 
@@ -223,9 +237,9 @@ class GameViewModel @Inject constructor(
                     levelReached = currentLevel,
                     won = true,
                     xpGained = xp,
-                    currentStreak =10 ,
-                    bestStreak = 4,
-                    hintsUsed =3 ,
+                    currentStreak = _currentStreak.value,
+                    bestStreak = _bestStreak.value,
+                    hintsUsed =_hintsUsed.value,
                     timeSpentSeconds = timeSec
                 )
 
@@ -243,6 +257,9 @@ class GameViewModel @Inject constructor(
             startNext()
         } else {
             // if not correct do the game over
+
+            _currentStreak.value = 0
+
             viewModelScope.launch {
 //                gameRepository.recordResult(q.gameType,
 //                    correct = false,
@@ -256,9 +273,9 @@ class GameViewModel @Inject constructor(
                     levelReached = currentLevel,
                     won = false,
                     xpGained = xp,
-                    currentStreak =10 ,
-                    bestStreak = 4,
-                    hintsUsed =3 ,
+                    currentStreak =_currentStreak.value ,
+                    bestStreak = _bestStreak.value,
+                    hintsUsed =_hintsUsed.value,
                     timeSpentSeconds = timeSec
                 )
             }
@@ -274,6 +291,29 @@ class GameViewModel @Inject constructor(
 
         // next question
 
+    }
+
+    fun calculateXp(won: Boolean, playerLevel: Int): Int {
+        return if (won) {
+            when (playerLevel) {
+                in 1..5 -> 20
+                in 6..10 -> 35
+                in 11..20 -> 50
+                else -> 70
+            }
+        } else {
+            when (playerLevel) {
+                in 1..5 -> 5
+                in 6..10 -> 10
+                in 11..20 -> 15
+                else -> 20
+            }
+        }
+    }
+
+
+    fun useHint() {
+        _hintsUsed.value += 1
     }
 
     private fun endGame() {

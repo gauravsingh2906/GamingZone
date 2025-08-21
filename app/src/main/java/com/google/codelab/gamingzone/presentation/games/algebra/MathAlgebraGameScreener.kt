@@ -302,32 +302,33 @@ fun GameWinAnimation(
     onAnimationFinished: () -> Unit = {}
 ) {
 
-        val composition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(R.raw.winner) // put your Lottie JSON in res/raw
-        )
-        val progress by animateLottieCompositionAsState(
-            composition,
-            iterations = 1, // play once
-            speed = 1.2f,
-            restartOnPlay = false
-        )
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.winner) // put your Lottie JSON in res/raw
+    )
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = 1, // play once
+        speed = 1.2f,
+        restartOnPlay = false
+    )
 
 
 
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-            modifier = Modifier.fillMaxSize().background(Color.Transparent)
-        )
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+    )
 
 
-        LaunchedEffect(progress) {
-            if (progress >= 1f) {
-                onAnimationFinished()
-            }
-
+    LaunchedEffect(progress) {
+        if (progress >= 1f) {
+            onAnimationFinished()
         }
 
+    }
 
 }
 
