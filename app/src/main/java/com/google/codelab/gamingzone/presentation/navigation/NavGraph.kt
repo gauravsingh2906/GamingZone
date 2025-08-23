@@ -327,11 +327,13 @@ fun NavGraph(
                                   isDraw = false,
                                   xpEarned = state.value.xpEarned,
                               )
-                            val time = viewModel.state.value.elapsedTime
-                            dailyMissionViewModel.updateProgress(
+                            val time = (viewModel.state.value.elapsedTime)/60
+                            newViewModel.updateProgress(
                                 gameName = "sudoku",
-                                minutes = viewModel.state.value.elapsedTime
+                                minutes = time,
+                                missionType = "play_games"
                             )
+
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(
                                 userId = newViewModel.userId.value ?: "name",
@@ -369,10 +371,17 @@ fun NavGraph(
                                 isDraw = false,
                                 xpEarned = state.value.xpEarned,
                             )
-                            val time = viewModel.state.value.elapsedTime
-                            dailyMissionViewModel.updateProgress(
+
+//                            dailyMissionViewModel.updateProgress(
+//                                gameName = "sudoku",
+//                                minutes = 1,
+//                                missionType = "play_games"
+//                            )
+                            val time = (viewModel.state.value.elapsedTime)/60
+                            newViewModel.updateProgress(
                                 gameName = "sudoku",
-                                minutes = viewModel.state.value.elapsedTime
+                                minutes = time,
+                                missionType = "play_games"
                             )
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(

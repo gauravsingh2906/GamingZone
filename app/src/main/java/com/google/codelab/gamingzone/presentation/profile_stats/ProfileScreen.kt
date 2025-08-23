@@ -160,7 +160,7 @@ fun ProfileScreen(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Level: ${gameStats.highestLevel}")
+                                Text("Games Played: ${gameStats.gamesPlayed}")
                                 Text("XP: ${gameStats.xp}")
                                 Text("Wins: ${gameStats.wins}")
                             }

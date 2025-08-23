@@ -99,6 +99,7 @@ class StatsRepositoryImpl @Inject constructor(
 
 
         val newId = UUID.randomUUID().toString()
+        Log.d("Id", "First id generated $newId")
 
         val adjectives = listOf("Cool", "Silent", "Funky", "Smart", "Dark", "Fire")
         val nouns = listOf("Ninja", "Cat", "Wizard", "Dragon", "Knight", "Fox")

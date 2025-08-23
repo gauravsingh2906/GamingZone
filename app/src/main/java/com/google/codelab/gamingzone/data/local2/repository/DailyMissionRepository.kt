@@ -9,6 +9,8 @@ import com.google.codelab.gamingzone.data.local2.entity.DailyMissionEntity
 
 interface DailyMissionRepository {
     suspend fun getMissionsForToday(userId:String): List<DailyMissionEntity>
-    suspend fun updateMissionProgress(gameName: String, minutesPlayed: Int)
+ //   suspend fun updateMissionProgress(gameName: String, minutesPlayed: Int)
+
+    suspend fun updateMissionProgress(userId: String, gameName: String, missionType: String, incrementBy: Int)
 }
 

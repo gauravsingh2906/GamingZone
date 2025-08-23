@@ -14,6 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -77,6 +78,8 @@ class GameViewModel @Inject constructor(
     private val _gameResult = MutableStateFlow<GameResult?>(null)
     val gameResult: StateFlow<GameResult?> = _gameResult
 
+    private val _userId = MutableStateFlow<String?>(null)
+    val userId: StateFlow<String?> = _userId.asStateFlow()
 
     private var currentLevel = 1
 
@@ -269,7 +272,9 @@ class GameViewModel @Inject constructor(
             viewModelScope.launch {
                 dailyMissionRepository.updateMissionProgress(
                     gameName = "algebra",
-                    minutesPlayed = _time.value
+                    missionType = "play_games",
+                    incrementBy = 1,
+                    userId = statsRepository.initUserIfNeeded()
                 )
             }
 
@@ -303,7 +308,9 @@ class GameViewModel @Inject constructor(
             viewModelScope.launch {
                 dailyMissionRepository.updateMissionProgress(
                     gameName = "algebra",
-                    minutesPlayed = _time.value
+                    missionType = "play_games",
+                    incrementBy = 1,
+                    userId = statsRepository.initUserIfNeeded()
                 )
             }
 

@@ -10,8 +10,8 @@ import com.google.codelab.gamingzone.data.local2.entity.DailyMissionEntity
 @Dao
 interface DailyMissionDao {
 
-    @Query("SELECT * FROM daily_missions WHERE date = :date")
-    suspend fun getMissionsForDate(date: String): List<DailyMissionEntity>
+    @Query("SELECT * FROM daily_missions WHERE userId = :userId AND date = :date")
+    suspend fun getMissionsForDate(userId: String, date: String): List<DailyMissionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMissions(missions: List<DailyMissionEntity>)

@@ -36,15 +36,17 @@ class DailyMissionViewModel @Inject constructor(
 //    private val _profile = MutableStateFlow<OverallProfileEntity?>(null)
 //    val profile: StateFlow<OverallProfileEntity?> = _profile
 
-    init {
-        // create user row if needed and set _userId
-        viewModelScope.launch {
-            val id = statsRepository.initUserIfNeeded()
-            Log.d("userId",id)
-            _userId.value = id
-            loadMissions(id)
-        }
-    }
+
+
+//    init {
+//        // create user row if needed and set _userId
+//        viewModelScope.launch {
+//            val id = statsRepository.initUserIfNeeded()
+//            Log.d("Id- mission",id)
+//            _userId.value = id
+//            loadMissions(id)
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun scheduleMidnightRefresh() {
@@ -70,9 +72,14 @@ class DailyMissionViewModel @Inject constructor(
         }
     }
 
-    fun updateProgress(gameName: String, minutes: Int) {
+    fun updateProgress(gameName: String,missionType:String, minutes: Int) {
         viewModelScope.launch {
-            repository.updateMissionProgress(gameName, minutes)
+            repository.updateMissionProgress(
+                userId = _userId.value ?: return@launch ,
+                gameName = gameName,
+                missionType = missionType,
+                incrementBy = minutes
+            )
             loadMissions(_userId.value ?: return@launch)
         }
     }
