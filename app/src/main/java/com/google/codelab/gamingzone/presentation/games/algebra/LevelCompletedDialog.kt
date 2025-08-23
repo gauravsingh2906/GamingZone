@@ -9,6 +9,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,9 +23,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.util.CoilUtils.result
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -32,9 +37,14 @@ import kotlin.random.Random
 fun LevelCompletedDialog(
     level: Int,
     earnedScore: Int,
+    score: Int,
+    xpEarned:Int,
+    streak:Int,
+    bestStreak:Int,
     onNextLevel: () -> Unit,
     onReplay: () -> Unit,
     onHome: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // simple count up
@@ -53,12 +63,34 @@ fun LevelCompletedDialog(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF6A8BFF), Color(0xFFB46CFF))
+                    listOf(
+                        Color(0xFF6A8BFF),
+                        Color(0xFFB46CFF)
+                    )
                 )
             )
     ) {
         // confetti layer
-        Confetti(modifier = Modifier.fillMaxSize().alpha(0.9f))
+        Confetti(modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.9f))
+
+        Row(
+            modifier = Modifier.padding(top = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                onClick = onBack,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                )
+            }
+            Text("XP +${xpEarned}", color = Color.Green, fontSize = 18.sp)
+            Text("Streak: ${streak}", color = Color.Yellow, fontSize = 18.sp)
+            Text("Best Streak: $bestStreak", color = Color.Cyan, fontSize = 18.sp)
+        }
 
         // card
         Surface(
@@ -70,18 +102,35 @@ fun LevelCompletedDialog(
             shadowElevation = 12.dp,
             color = Color(0xFFFDF9FF)
         ) {
+
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(20.dp)
                     .widthIn(max = 520.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            painter = painterResource(android.R.drawable.ic_media_previous),
+                            contentDescription = "Back",
+                            tint = Color(0xFF2C1A4A)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+
                 Text(
                     text = "Level $level Completed!",
-                    fontSize = 28.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color(0xFF2C1A4A),
-                    modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
                     textAlign = TextAlign.Center
                 )
 
@@ -95,16 +144,19 @@ fun LevelCompletedDialog(
                 Spacer(Modifier.height(16.dp))
 
                 // cute medal/mascot (replace with your drawable if you have one)
-                Box(
-                    modifier = Modifier
-                        .size(96.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFEEE7FF)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // fallback icon
-                    Text("🏅", fontSize = 42.sp)
-                }
+//                Box(
+//                    modifier = Modifier
+//                        .size(96.dp)
+//                        .clip(CircleShape)
+//                        .background(Color(0xFFEEE7FF)),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    // fallback icon
+//
+//                }
+                Text("🏅", fontSize = 42.sp)
+
+
 
                 Spacer(Modifier.height(16.dp))
 
@@ -116,7 +168,7 @@ fun LevelCompletedDialog(
                     color = Color(0xFF38225E)
                 )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(12.dp))
 
                 // tiny progress hint (optional)
                 HintPill(text = "Tip: Keep streaks to earn bonus XP!")
@@ -125,22 +177,27 @@ fun LevelCompletedDialog(
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedButton(
                         onClick = onReplay,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.weight(1f)
                     ) { Text("Replay") }
 
                     Button(
                         onClick = onNextLevel,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.weight(1f)
                     ) { Text("Next Level ▶") }
-
-                    TextButton(onClick = onHome) { Text("Home") }
                 }
 
                 Spacer(Modifier.height(8.dp))
+
+                TextButton(onClick = onHome) {
+                    Text("Home")
+                }
+
             }
         }
     }
@@ -165,7 +222,9 @@ fun GameOverDialog(
             )
     ) {
         // gentle floating bubbles
-        FloatingBubbles(modifier = Modifier.fillMaxSize().alpha(0.35f))
+        FloatingBubbles(modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.35f))
 
         Surface(
             modifier = Modifier
@@ -209,7 +268,12 @@ fun GameOverDialog(
                 if (bestScore != null) {
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Best: $bestScore  •  ${maxOf(0, bestScore - score)} points to beat it!",
+                        text = "Best: $bestScore  •  ${
+                            maxOf(
+                                0,
+                                bestScore - score
+                            )
+                        } points to beat it!",
                         fontSize = 14.sp,
                         color = Color(0xFF8C5B5B)
                     )

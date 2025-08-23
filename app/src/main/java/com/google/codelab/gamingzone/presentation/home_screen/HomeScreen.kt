@@ -60,6 +60,7 @@ import com.google.codelab.gamingzone.presentation.home_screen.components.GamingZ
 @Composable
 fun HomeScreen(
     games: List<GameItem>,
+    onSearchClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     selectedCategory: GameCategory?,
     onCategorySelected: (GameCategory?) -> Unit,
@@ -81,7 +82,9 @@ fun HomeScreen(
         {
             GamingZoneTopAppBar(
                 scrollBehaviour = scrollBehavior,
-                onSearchClick = { }
+                onSearchClick = {
+                    onSearchClick()
+                }
             )
             GameCategoryFilter(
                 selectedCategory = selectedCategory,

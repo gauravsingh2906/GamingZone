@@ -203,7 +203,7 @@ fun StatChip(icon: String, label: String, value: String) {
 fun LevelCarousel(profile: OverallProfileEntity) {
     val currentLevel = profile.overallHighestLevel
     val currentXP = profile.totalXP
-    val xpForNextLevel = (currentLevel + 1) * 500  // example XP rule
+    val xpForNextLevel = (currentLevel) * 500  // example XP rule
     val progress = currentXP.toFloat() / xpForNextLevel.toFloat()
     val xpNeeded = xpForNextLevel - currentXP
 

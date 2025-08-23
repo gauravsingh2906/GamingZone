@@ -30,6 +30,8 @@ import androidx.navigation.toRoute
 import com.google.codelab.gamingzone.SplashScreen
 import com.google.codelab.gamingzone.data.local2.entity.OverallProfileEntity
 import com.google.codelab.gamingzone.data.model.GameResult
+import com.google.codelab.gamingzone.presentation.daily_missions.DailyMissionScreen
+import com.google.codelab.gamingzone.presentation.daily_missions.DailyMissionViewModel
 import com.google.codelab.gamingzone.presentation.game_detail_screen.DifficultySelectionScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameDetailScreen
 import com.google.codelab.gamingzone.presentation.game_detail_screen.GameMode
@@ -65,6 +67,7 @@ import com.google.codelab.gamingzone.presentation.profile_stats.StatsViewModel
 import com.google.codelab.gamingzone.tobe.TubeScreen
 import com.google.codelab.gamingzone.tobe.TubeViewModel
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.minutes
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -110,7 +113,10 @@ fun NavGraph(
                 onStartChallenge = { challenge ->
                     navController.navigate(challenge.gameRoute)
                 },
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                onSearchClick = {
+                    navController.navigate(Routes.DailyMissionScreen)
+                }
             )
         }
         composable(DifficultyScreenRoute) {
@@ -218,6 +224,10 @@ fun NavGraph(
             )
         }
 
+        composable<Routes.DailyMissionScreen> {
+            DailyMissionScreen()
+        }
+
 
 
 
@@ -299,6 +309,8 @@ fun NavGraph(
             val viewModel: SudokuViewModel = hiltViewModel()
             val userStatsViewModel: UserStatsViewModel = hiltViewModel()
             val newViewModel:StatsViewModel = hiltViewModel()
+           val dailyMissionViewModel: DailyMissionViewModel = hiltViewModel()
+
             val state = viewModel.state
 
 
@@ -315,6 +327,11 @@ fun NavGraph(
                                   isDraw = false,
                                   xpEarned = state.value.xpEarned,
                               )
+                            val time = viewModel.state.value.elapsedTime
+                            dailyMissionViewModel.updateProgress(
+                                gameName = "sudoku",
+                                minutes = (time/60).toLong()
+                            )
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(
                                 userId = newViewModel.userId.value ?: "name",
@@ -351,6 +368,11 @@ fun NavGraph(
                                 isWin = false,
                                 isDraw = false,
                                 xpEarned = state.value.xpEarned,
+                            )
+                            val time = viewModel.state.value.elapsedTime
+                            dailyMissionViewModel.updateProgress(
+                                gameName = "sudoku",
+                                minutes = (time/60).toLong()
                             )
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(
@@ -450,6 +472,10 @@ fun NavGraph(
 
             val gameViewModel: GameViewModel= hiltViewModel()
             val level = it.toRoute<Routes.AlgebraGameScreen>().level
+
+           val dailyMissionViewModel: DailyMissionViewModel = hiltViewModel()
+
+
 
             Log.d("Algebra Level",level.toString())
 

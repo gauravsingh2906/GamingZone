@@ -14,7 +14,7 @@ data class OverallProfileEntity(
     val totalLosses: Int = 0,
     val totalDraws: Int = 0,
     val totalXP: Int = 0,
-    val overallHighestLevel: Int = 0,
+    val overallHighestLevel: Int = 1,
     val bestStreak: Int = 0,
     val totalHintsUsed: Int = 0,
     val totalTimeSeconds: Long = 0L

@@ -8,6 +8,8 @@ import com.google.codelab.gamingzone.data.local1.dao.AdvancedStatsDao
 import com.google.codelab.gamingzone.data.local1.dao.LevelProgressDao
 
 import com.google.codelab.gamingzone.data.local1.dao.UserStatsDao
+import com.google.codelab.gamingzone.data.local2.dao.DailyMissionDao
+import com.google.codelab.gamingzone.data.local2.repository.DailyMissionRepository
 import com.google.codelab.gamingzone.data.repository.AdvancedStatsRepository
 import com.google.codelab.gamingzone.data.repository.GameRepository
 import com.google.codelab.gamingzone.data.repository.StatsRepository
@@ -31,6 +33,14 @@ object DatabaseModule {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideDailyMissionDao(db: AppDatabase): DailyMissionDao = db.dailyMissionDao()
+
+//    @Provides
+//    @Singleton
+//    fun provideDailyMissionRepository(dao: DailyMissionDao): DailyMissionRepository = DailyMissionRepository(dao)
 
     @Provides
     @Singleton

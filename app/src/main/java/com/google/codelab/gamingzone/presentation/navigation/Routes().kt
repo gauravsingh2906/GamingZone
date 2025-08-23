@@ -61,6 +61,9 @@ sealed class Routes {
     @Serializable
     data object LevelSelection: Routes()
 
+   @Serializable
+   data object DailyMissionScreen : Routes()
+
     @Serializable
     data object MathPathScreen : Routes()
 

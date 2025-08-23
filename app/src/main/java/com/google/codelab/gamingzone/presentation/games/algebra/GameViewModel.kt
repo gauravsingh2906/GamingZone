@@ -2,12 +2,10 @@ package com.google.codelab.gamingzone.presentation.games.algebra
 
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import com.google.codelab.gamingzone.data.local2.repository.DailyMissionRepository
 import com.google.codelab.gamingzone.data.local2.repository.StatsRepository
 import com.google.codelab.gamingzone.data.repository.GameRepository
 import com.google.codelab.gamingzone.data.repository.LevelRepository
@@ -25,10 +23,11 @@ class GameViewModel @Inject constructor(
     private val gameRepository: GameRepository,
     private val levelRepository: LevelRepository,
     private val statsRepository: StatsRepository,
+    private val dailyMissionRepository: DailyMissionRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-  //  val userId = savedStateHandle.toRoute<>()
+    //  val userId = savedStateHandle.toRoute<>()
 
     private val manager = GameManager()
 
@@ -71,6 +70,10 @@ class GameViewModel @Inject constructor(
     private val _maxUnlockedLevel = MutableStateFlow(1)
     val maxUnlockedLevel: StateFlow<Int> = _maxUnlockedLevel
 
+    private val _gameResult = MutableStateFlow<GameResult?>(null)
+    val gameResult: StateFlow<GameResult?> = _gameResult
+
+
     private var currentLevel = 1
 
     fun setLevel(level: Int) {
@@ -78,13 +81,14 @@ class GameViewModel @Inject constructor(
         Log.d("Level", "Level set to $level")
         Log.d("Level Current", "Level set to $currentLevel")
         _level.value = level
-        Log.d("Level Value","Level value:${_level.value}")
+        Log.d("Level Value", "Level value:${_level.value}")
     }
 
     fun levelCompleted() {
         viewModelScope.launch {
 
-            val currentMax = levelRepository.getMaxUnlockedLevel().first() // get latest value from flow
+            val currentMax =
+                levelRepository.getMaxUnlockedLevel().first() // get latest value from flow
             Log.d("Level", "Current max: $currentMax")
             Log.d("Level", "Current level: $currentLevel")
 
@@ -123,8 +127,6 @@ class GameViewModel @Inject constructor(
     }
 
 
-
-
 //    init {
 //        viewModelScope.launch {
 //            gameRepository.getMaxUnlockedLevel().collect { level ->
@@ -144,7 +146,6 @@ class GameViewModel @Inject constructor(
 //            }
 //        }
 //    }
-
 
 
     fun startGame() {
@@ -175,7 +176,7 @@ class GameViewModel @Inject constructor(
             }
             if (_timeRemaining.value <= 0 || !_gameOver.value) {
                 // Time is up
-              //  endGame()
+                //  endGame()
             }
         }
     }
@@ -185,13 +186,12 @@ class GameViewModel @Inject constructor(
     }
 
 
-
-
     fun submitAnswer(userAnswer: Any?) {
         if (_gameOver.value) return
 
         val q = _question.value ?: return
         val timeSec = (System.currentTimeMillis() - questionStartTime) / 1000L
+        Log.d("Time", "Time taken: $timeSec")
 
         val correct = when (q) {
             is Question.MissingNumber -> (userAnswer as? Int) == q.answer
@@ -210,88 +210,103 @@ class GameViewModel @Inject constructor(
             }
         }
 
-        // XP calculation
-        val baseXp = q.difficultyLevel * 5
-        val bonus = if (correct) (LevelConfig(q.difficultyLevel).xpForCorrectBase() / 2) else 0
-        val xp = baseXp + bonus
-
-
-
-        // persist asynchronously
-
+        val xp = calculateXp(correct, currentLevel)
 
         if (correct) {
             _score.value += xp
-
             _currentStreak.value += 1
             if (_currentStreak.value > _bestStreak.value) {
                 _bestStreak.value = _currentStreak.value
             }
+        } else {
+            _currentStreak.value = 0
+        }
+
+        // Save to repository
+        viewModelScope.launch {
+            statsRepository.updateGameResult(
+                userId = statsRepository.initUserIfNeeded(),
+                gameName = "algebra",
+                levelReached = currentLevel,
+                won = false,
+                xpGained = 0,
+                currentStreak = 0,
+                bestStreak = 0,
+                hintsUsed = 0,
+                timeSpentSeconds = timeSec
+            )
+        }
+
+        val time = timeSec/60
+
+        viewModelScope.launch {
+            dailyMissionRepository.updateMissionProgress(
+                gameName = "algebra",
+                minutesPlayed = timeSec.toInt()
+            )
+        }
+
+
+        // If game over (wrong answer or time out)
+        if (!correct) {
+            _gameResult.value = GameResult(
+                level = currentLevel,
+                won = false,
+                xpEarned = xp,
+                score = _score.value,
+                streak = _currentStreak.value,
+                bestStreak = _bestStreak.value,
+                hintsUsed = _hintsUsed.value,
+                timeSpent = timeSec,
+            )
 
             viewModelScope.launch {
-             //   gameRepository.recordResult(q.gameType, true, false, xp, timeSec)
-
                 statsRepository.updateGameResult(
                     userId = statsRepository.initUserIfNeeded(),
                     gameName = "algebra",
                     levelReached = currentLevel,
-                    won = true,
-                    xpGained = xp,
+                    won = correct,
+                    xpGained = 0,
                     currentStreak = _currentStreak.value,
                     bestStreak = _bestStreak.value,
-                    hintsUsed =_hintsUsed.value,
-                    timeSpentSeconds = timeSec
-                )
-
-
-
-
-      //          levelRepository.unlockNextLevelIfNeeded(currentLevel+1)
-            }
-
-            if ((_score.value/100) > _level.value) {
-                markLevelCompleted()
-             //   completeLevel(_level.value+1)
-              //  _level.value =_level.value+1
-            }
-            startNext()
-        } else {
-            // if not correct do the game over
-
-            _currentStreak.value = 0
-
-            viewModelScope.launch {
-//                gameRepository.recordResult(q.gameType,
-//                    correct = false,
-//                    isDraw = false,
-//                    xpEarned = xp,
-//                    timeTakenSec = timeSec
-//                )
-                statsRepository.updateGameResult(
-                    userId = statsRepository.initUserIfNeeded(),
-                    gameName = "algebra",
-                    levelReached = currentLevel,
-                    won = false,
-                    xpGained = xp,
-                    currentStreak =_currentStreak.value ,
-                    bestStreak = _bestStreak.value,
-                    hintsUsed =_hintsUsed.value,
+                    hintsUsed = _hintsUsed.value,
                     timeSpentSeconds = timeSec
                 )
             }
             endGame()
-        }
-        // simple level up rule
-//        if (correct && (_score.value / 100) > _level.value) {
-//            _level.value = _level.value + 1
-//            startNext()
-//        } else {
-//            startNext()
-//        }
+        } else if ((_score.value / 100) > _level.value) {
+            markLevelCompleted()
+            _gameResult.value = GameResult(
+                level = currentLevel,
+                won = true,
+                xpEarned = xp,
+                score = _score.value,
+                streak = _currentStreak.value,
+                bestStreak = _bestStreak.value,
+                hintsUsed = _hintsUsed.value,
+                timeSpent = timeSec
+            )
 
-        // next question
+            viewModelScope.launch {
+                statsRepository.updateGameResult(
+                    userId = statsRepository.initUserIfNeeded(),
+                    gameName = "algebra",
+                    levelReached = currentLevel,
+                    won = correct,
+                    xpGained = xp,
+                    currentStreak = _currentStreak.value,
+                    bestStreak = _bestStreak.value,
+                    hintsUsed = _hintsUsed.value,
+                    timeSpentSeconds = timeSec
+                )
+            }
+            endGame()
+        } else {
+            startNext()
+        }
 
     }
+
 
     fun calculateXp(won: Boolean, playerLevel: Int): Int {
         return if (won) {

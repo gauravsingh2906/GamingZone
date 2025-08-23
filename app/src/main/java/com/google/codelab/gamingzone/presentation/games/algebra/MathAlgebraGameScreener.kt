@@ -49,6 +49,7 @@ fun MathAlgebraGameScreen(
     val timeLeft by viewModel.timeRemaining.collectAsState()
     val isGameOver by viewModel.gameOver.collectAsState()
     val levelCompleted by viewModel.levelCompleted.collectAsState()
+    val gameResult by viewModel.gameResult.collectAsState()
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -87,184 +88,274 @@ fun MathAlgebraGameScreen(
 
     var showCompletedDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(levelCompleted) {
-        showAnimation = true
+    var showResultDialog by remember { mutableStateOf(false) }
+//    LaunchedEffect(levelCompleted) {
+//        showAnimation = true
+//    }
+    LaunchedEffect(gameResult) {
+        gameResult?.let { result ->
+            if (result.won) {
+                // Step 1: Start animation first
+                showAnimation = true
+                showResultDialog = false
+
+                // Step 2: Wait for animation duration (~2s or match your lottie file)
+                delay(3000)
+
+                // Step 3: Hide animation, show dialog
+                showAnimation = false
+                showResultDialog = true
+            } else {
+                // If lost → show dialog directly
+                showResultDialog = true
+            }
+        }
     }
 
+    val value = score > (level * 100)
+
+    val total = (level + 1) * 100
 
     Box(
         modifier = Modifier.fillMaxSize()
 //            .padding(16.dp)
     ) {
-        if (isGameOver) {
-            //    GameOverUI(score, level, onRestart = { viewModel.startGame() }, onBack = onBack)
-            GameOverDialog(
-                level = level,
-                score = score,
-                bestScore = null, // or provide from Room if you track it
-                onRetry = { viewModel.startGame() },
-                onHome = onBack
-            )
-        } else {
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFFE3F2FD), Color(0xFFFAF8FF)
+                        )
+                    )
+                )
+                .padding(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+
+                // ---------- HUD ----------
+                GameHud(
+                    level = level, score = score, timeLeft = timeLeft, onBack = onBack
+                )
+
+                LinearProgressIndicator(
+                    progress = (score / total.toFloat()).coerceIn(0f, 1f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+                // ---------- Question Card ----------
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .shadow(6.dp, RoundedCornerShape(24.dp)),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
+                ) {
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        // Question Title
+                        Text(
+                            text = "Solve this!",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 22.sp,
+                            color = Color(0xFF2C3E50)
+                        )
+
+                        Spacer(Modifier.height(8.dp))
+
+                        // Big Question Area
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFF6F7FB))
+                                .border(
+                                    1.dp, Color(0xFFE6E8F0), RoundedCornerShape(20.dp)
+                                ), contentAlignment = Alignment.TopCenter
+                        ) {
+                            when (val q = question) {
+                                is Question.MissingNumber -> MissingNumberCard(
+                                    q = q,
+                                    textAnswer = textAnswer,
+                                    onTextChange = { textAnswer = it },
+                                    onSubmit = { ans ->
+                                        focus.clearFocus()
+                                        val correct = ans == q.answer
+                                        viewModel.submitAnswer(ans)
+                                        feedback =
+                                            if (correct) "Great job! you done hard part" else "Oops! Answer: ${q.answer}"
+                                        textAnswer = ""
+                                    })
+
+                                is Question.MissingOperator -> MissingOperatorCard(q = q) { op ->
+                                    val correct = op == q.answer
+                                    viewModel.submitAnswer(op)
+                                    feedback = if (correct) "Nice!" else "Not quite!"
+                                }
+
+                                is Question.TrueFalse -> TrueFalseCard(q = q) { choice ->
+                                    val correct = choice == q.isCorrect
+                                    viewModel.submitAnswer(choice)
+                                    feedback = if (correct) "Correct!" else "Wrong!"
+                                }
+
+                                is Question.Reverse -> ReverseCard(q = q) { op ->
+                                    val correct = op == q.answer
+                                    viewModel.submitAnswer(op)
+                                    feedback = if (correct) "Awesome!" else "Try again!"
+                                }
+
+                                is Question.Mix -> MixCard(
+                                    q = q,
+                                    textAnswer = textAnswer,
+                                    onTextChange = { textAnswer = it },
+                                    onSubmitMissing = { ans, correctAns ->
+                                        focus.clearFocus()
+                                        viewModel.submitAnswer(ans)
+                                        feedback =
+                                            if (ans == correctAns) "Great!" else "Answer: $correctAns"
+                                        textAnswer = ""
+                                    },
+                                    onSubmitOp = { op, correctOp ->
+                                        viewModel.submitAnswer(op)
+                                        feedback = if (op == correctOp) "Nice!" else "Oops!"
+                                    },
+                                    onSubmitTF = { choice, correct ->
+                                        viewModel.submitAnswer(choice)
+                                        feedback =
+                                            if (choice == correct) "Correct!" else "Wrong!"
+                                    })
+
+                                else -> {
+                                    Log.e("MathGame", "Unexpected question type: $q")
+                                }
+                            }
+                        }
+
+                        // Feedback Toast (animated)
+                        FeedbackPill(feedback = feedback)
+                    }
+                }
+
+                // Bottom actions
+                BottomBar(
+                    onHint = {
+                        viewModel.useHint()
+                        //  feedback = "Hint: think step-by-step!"
+                        googleAdManager.loadRewardedAd(adMobAdUnitId) { loaded ->
+                            if (loaded && activity != null) {
+                                googleAdManager.showRewardedAd(
+                                    activity,
+                                    onUserEarnedReward = {
+                                        showHint = true
+                                    },
+                                    onClosed = {}
+                                )
+                            }
+                        }
+                    },
+                    onRestart = { viewModel.startGame() },
+                    onPause = { /* hook if you add pause modal */ }
+                )
+            }
+
+
+//                if (levelCompleted && showAnimation) {
+//                    GameWinAnimation(
+//                        onAnimationFinished = {
+//                            showAnimation = false
+//                            showCompletedDialog = true
+//                        }
+//                    )
+//                }
+
+//                if (levelCompleted && showCompletedDialog && !showAnimation) {
+//                    LevelCompletedDialog(
+//                        level = level,
+//                        earnedScore = score,
+//                        onNextLevel = {
+//                            viewModel.levelCompleted() // unlock in Room
+//                            viewModel.setLevel(level + 1)
+//                            viewModel.startGame()
+//                            // naviagteToGameScreen(viewModel.level.value)
+//                        },
+//                        onReplay = {
+//                            viewModel.setLevel(level)
+//                            viewModel.startGame()
+//                        },
+//                        onHome = {
+//                            viewModel.levelCompleted()
+//                            onBack()
+//                        }
+//                    )
+//                }
+
+            if (showHint) {
+                Text(
+                    "Hint: think step-by-step!",
+                    color = Color(0xFFAD1457),
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+        }
+
+        if (showAnimation) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color(0xFFE3F2FD), Color(0xFFFAF8FF)
-                            )
-                        )
-                    )
-                    .padding(12.dp)
+                    .background(Color.Black.copy(alpha = 0.8f)), // transparent background
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                GameWinAnimation() // 🎉 full screen animation
+            }
+        }
+
+        if (showResultDialog) {
+            gameResult?.let { result ->
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)), // dim background
+                    contentAlignment = Alignment.TopCenter
                 ) {
-
-                    // ---------- HUD ----------
-                    GameHud(
-                        level = level, score = score, timeLeft = timeLeft, onBack = onBack
-                    )
-
-                    // ---------- Question Card ----------
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .shadow(6.dp, RoundedCornerShape(24.dp)),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        )
+                    Column(
+                        modifier = Modifier.padding(top = 50.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            // Question Title
-                            Text(
-                                text = "Solve this!",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 22.sp,
-                                color = Color(0xFF2C3E50)
-                            )
-
-                            Spacer(Modifier.height(8.dp))
-
-                            // Big Question Area
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFFF6F7FB))
-                                    .border(
-                                        1.dp, Color(0xFFE6E8F0), RoundedCornerShape(20.dp)
-                                    ), contentAlignment = Alignment.TopCenter
-                            ) {
-                                when (val q = question) {
-                                    is Question.MissingNumber -> MissingNumberCard(
-                                        q = q,
-                                        textAnswer = textAnswer,
-                                        onTextChange = { textAnswer = it },
-                                        onSubmit = { ans ->
-                                            focus.clearFocus()
-                                            val correct = ans == q.answer
-                                            viewModel.submitAnswer(ans)
-                                            feedback =
-                                                if (correct) "Great job! you done hard part" else "Oops! Answer: ${q.answer}"
-                                            textAnswer = ""
-                                        })
-
-                                    is Question.MissingOperator -> MissingOperatorCard(q = q) { op ->
-                                        val correct = op == q.answer
-                                        viewModel.submitAnswer(op)
-                                        feedback = if (correct) "Nice!" else "Not quite!"
-                                    }
-
-                                    is Question.TrueFalse -> TrueFalseCard(q = q) { choice ->
-                                        val correct = choice == q.isCorrect
-                                        viewModel.submitAnswer(choice)
-                                        feedback = if (correct) "Correct!" else "Wrong!"
-                                    }
-
-                                    is Question.Reverse -> ReverseCard(q = q) { op ->
-                                        val correct = op == q.answer
-                                        viewModel.submitAnswer(op)
-                                        feedback = if (correct) "Awesome!" else "Try again!"
-                                    }
-
-                                    is Question.Mix -> MixCard(
-                                        q = q,
-                                        textAnswer = textAnswer,
-                                        onTextChange = { textAnswer = it },
-                                        onSubmitMissing = { ans, correctAns ->
-                                            focus.clearFocus()
-                                            viewModel.submitAnswer(ans)
-                                            feedback =
-                                                if (ans == correctAns) "Great!" else "Answer: $correctAns"
-                                            textAnswer = ""
-                                        },
-                                        onSubmitOp = { op, correctOp ->
-                                            viewModel.submitAnswer(op)
-                                            feedback = if (op == correctOp) "Nice!" else "Oops!"
-                                        },
-                                        onSubmitTF = { choice, correct ->
-                                            viewModel.submitAnswer(choice)
-                                            feedback =
-                                                if (choice == correct) "Correct!" else "Wrong!"
-                                        })
-
-                                    else -> {
-                                        Log.e("MathGame", "Unexpected question type: $q")
-                                    }
-                                }
-                            }
-
-                            // Feedback Toast (animated)
-                            FeedbackPill(feedback = feedback)
-                        }
+                        Text("Score: ${result.score}", color = Color.White, fontSize = 20.sp)
+                        Text("XP +${result.xpEarned}", color = Color.Green, fontSize = 18.sp)
+                        Text("Streak: ${result.streak}", color = Color.Yellow, fontSize = 18.sp)
+                        Text(
+                            "Best Streak: ${result.bestStreak}",
+                            color = Color.Cyan,
+                            fontSize = 18.sp
+                        )
                     }
-
-                    // Bottom actions
-                    BottomBar(
-                        onHint = {
-                            //  feedback = "Hint: think step-by-step!"
-                            googleAdManager.loadRewardedAd(adMobAdUnitId) { loaded ->
-                                if (loaded && activity != null) {
-                                    googleAdManager.showRewardedAd(
-                                        activity,
-                                        onUserEarnedReward = {
-                                            showHint = true
-                                        },
-                                        onClosed = {}
-                                    )
-                                }
-                            }
-                        },
-                        onRestart = { viewModel.startGame() },
-                        onPause = { /* hook if you add pause modal */ }
-                    )
                 }
 
-                if (levelCompleted && showAnimation) {
-                    GameWinAnimation(
-                        onAnimationFinished = {
-                            showAnimation = false
-                            showCompletedDialog = true
-                        }
-                    )
-                }
-
-                if (levelCompleted && showCompletedDialog && !showAnimation) {
+                if (result.won) {
                     LevelCompletedDialog(
                         level = level,
-                        earnedScore = score,
+                        earnedScore = result.score,
                         onNextLevel = {
                             viewModel.levelCompleted() // unlock in Room
                             viewModel.setLevel(level + 1)
@@ -278,22 +369,31 @@ fun MathAlgebraGameScreen(
                         onHome = {
                             viewModel.levelCompleted()
                             onBack()
-                        }
+                        },
+                        onBack = onBack,
+                        score = result.score,
+                        xpEarned = result.xpEarned,
+                        streak = result.streak,
+                        bestStreak = result.bestStreak
+
+//                                xp = result.xpEarned,
+//                                score = result.score,
+//                                streak = result.streak,
+//                                bestStreak = result.bestStreak
+                    )
+                } else {
+                    GameOverDialog(
+                        level = level,
+                        score = result.score,
+                        bestScore = null, // or provide from Room if you track it
+                        onRetry = { viewModel.startGame() },
+                        onHome = onBack
                     )
                 }
-
-                if (showHint) {
-                    Text(
-                        "Hint: think step-by-step!",
-                        color = Color(0xFFAD1457),
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-
             }
         }
     }
+
 }
 
 

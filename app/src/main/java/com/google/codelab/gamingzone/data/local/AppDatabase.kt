@@ -11,10 +11,12 @@ import com.google.codelab.gamingzone.data.local1.entity.PerGameStatsEntity
 import com.google.codelab.gamingzone.data.local1.entity.TotalStatsEntity
 
 import com.google.codelab.gamingzone.data.local1.entity.UserEntity
+import com.google.codelab.gamingzone.data.local2.dao.DailyMissionDao
+import com.google.codelab.gamingzone.data.local2.entity.DailyMissionEntity
 
 @Database(
-    entities = [UserEntity::class, TotalStatsEntity::class, PerGameStatsEntity::class, AdvancedStatsEntity::class, LevelProgressEntity::class],
-    version = 3,
+    entities = [UserEntity::class, TotalStatsEntity::class, PerGameStatsEntity::class, AdvancedStatsEntity::class, LevelProgressEntity::class, DailyMissionEntity::class],
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,4 +26,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun advancedStatsDao(): AdvancedStatsDao
 
     abstract fun levelProgressDao(): LevelProgressDao
+
+    abstract fun dailyMissionDao(): DailyMissionDao
 }

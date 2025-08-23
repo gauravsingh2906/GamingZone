@@ -94,6 +94,7 @@ class StatsRepositoryImpl @Inject constructor(
 
     override suspend fun initUserIfNeeded(username: String?): String {
         val existing = overallProfileDao.getAnyUser()
+
         if (existing != null) return existing.userId
 
 
