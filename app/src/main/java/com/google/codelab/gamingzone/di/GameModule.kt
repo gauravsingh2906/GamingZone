@@ -44,7 +44,7 @@ object SudokuDatabaseModule {
             context,
             SudokuDatabase::class.java,
             "sudoku_database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

@@ -89,6 +89,8 @@ sealed class MathMemoryAction {
     object NextLevel : MathMemoryAction()
     object ResetGame : MathMemoryAction()
 
+    object HideCards : MathMemoryAction()
+
     data class SelectTheme(val theme: GameTheme) : MathMemoryAction()
     object UnlockNextTheme : MathMemoryAction() // Example action
 }

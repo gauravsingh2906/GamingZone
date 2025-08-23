@@ -27,6 +27,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.codelab.gamingzone.presentation.home_screen.SampleGames.Default
 import com.google.codelab.gamingzone.presentation.profile_stats.StatsViewModel
+import kotlinx.coroutines.delay
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -35,14 +36,29 @@ fun MathMemoryMixScreen(
     viewModel: MathMemoryViewModel = hiltViewModel(),
     statsViewModel: StatsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState
-    val answerOptions by viewModel.answerOptions
+    val uiState = viewModel.uiState.value
+
+    // Show loading while uiState is null (initial data loading)
+    if (uiState == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    val answerOptions = viewModel.answerOptions.value
     val theme = uiState.theme.selectedTheme
     val phase = when {
         uiState.game.isShowCards -> "MEMORIZE"
         !uiState.game.showResult -> "SOLVE"
         else -> "RESULT"
     }
+
+    var secondChanceUsed by remember(uiState.game.level.number) { mutableStateOf(false) }
+    var showMemorizePhaseAgain by remember { mutableStateOf(false) }
+
+    val showUnlockAnimation by remember { derivedStateOf { viewModel.showUnlockAnimation } }
+    val themeName by remember { derivedStateOf { viewModel.newlyUnlockedThemeName } }
 
     LaunchedEffect(uiState.game.level, uiState.game.isShowCards) {
         if (uiState.game.isShowCards) {
@@ -52,10 +68,6 @@ fun MathMemoryMixScreen(
         }
     }
 
-    val showUnlockAnimation by remember { derivedStateOf { viewModel.showUnlockAnimation } }
-    val themeName by remember { derivedStateOf { viewModel.newlyUnlockedThemeName } }
-
-
     LaunchedEffect(Unit) {
         viewModel.loadThemes()
     }
@@ -64,21 +76,12 @@ fun MathMemoryMixScreen(
     val showResult = uiState.game.showResult
     val isCorrect = uiState.game.isCorrect
 
-
-
-    // Add a remember key that resets every round
-    var alreadySavedThisResult by remember(uiState.game.level.number, uiState.game.showResult) { mutableStateOf(false) }
-
-    val mathStats by viewModel.mathStats.collectAsState()
-
-
+    // Save stats after result appears, only once per level
     var lastSavedLevel by remember { mutableStateOf<Int?>(null) }
-
     if (showResult && lastSavedLevel != gameLevel) {
         LaunchedEffect(gameLevel, showResult) {
-            Log.d("StatsUpdate", "Saving stats for level $gameLevel")
             viewModel.onLevelResultAndSaveStats(
-                userId = statsViewModel.userId.value ?: "123",
+                userId = statsViewModel.userId.value ?: return@LaunchedEffect,
                 isCorrect = isCorrect,
                 hintsUsed = 2,
                 timeSpentSeconds = 54
@@ -87,26 +90,6 @@ fun MathMemoryMixScreen(
         }
     }
 
-
-
-//    LaunchedEffect(Unit) {
-     //   viewModel.loadMathStats(userId)
-//    }
-
-    // Show unlock animation only if a new theme just unlocked and not dismissed
-//    if (showUnlockAnimation && !themeName.isNullOrEmpty()) {
-//        LaunchedEffect(Unit) {
-//            Log.d("Theme", themeName + "njdskjgnkfnbkvdf")
-//        }
-//        print("reached here")
-//        AnimatedUnlockBanner(
-//            themeName = themeName!!,
-//            onContinue = { viewModel.onUnlockAnimationDismiss() }
-//        )
-//    }
-
-
-    // Theme + overlay background
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(theme.backgroundImage),
@@ -115,15 +98,11 @@ fun MathMemoryMixScreen(
             modifier = Modifier.fillMaxSize()
         )
         Box(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.44f))
+            Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.44f))
         )
 
         Column(
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 14.dp),
+            Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ThemeSelector(
@@ -132,38 +111,33 @@ fun MathMemoryMixScreen(
                 unlockedNames = uiState.theme.unlockedThemes,
                 onSelect = { viewModel.onAction(MathMemoryAction.SelectTheme(it)) }
             )
-
             Spacer(Modifier.height(14.dp))
 
             Text(
-                text = "Level ${uiState.game.level.number}",
+                text = "Level $gameLevel",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 10.dp),
-                color = if (phase == "RESULT" && uiState.game.isCorrect)
-                    Color(0xFF388E3C) else theme.textColor
+                color = if (phase == "RESULT" && isCorrect)
+                    Color(0xFF388E3C)
+                else theme.textColor
             )
 
-
-            // Current phase and instruction
             when (phase) {
                 "MEMORIZE" -> Text(
-                    text = "👀 Memorize the moves! Start from:",
+                    "👀 Memorize the moves! Start from:",
                     style = MaterialTheme.typography.titleMedium,
                     color = theme.textColor,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
-
                 "SOLVE" -> Text(
-                    text = "Now solve: Start at the number below, do each step left-to-right (no BODMAS)!",
+                    "Now solve: Start at the number below, do each step left-to-right (no BODMAS)!",
                     style = MaterialTheme.typography.titleMedium,
                     color = theme.textColor,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
-
-                "RESULT" -> {} // handled below
+                else -> { /* Result handled below */ }
             }
 
-            // PROMINENT start number
             StartNumberBox(
                 value = uiState.game.level.start,
                 textColor = theme.buttonTextColor,
@@ -172,12 +146,8 @@ fun MathMemoryMixScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            // Cards (always show during MEMORIZE phase)
             if (phase == "MEMORIZE") {
-                CardsRow(
-                    cards = uiState.game.level.cards,
-                    textColor = theme.textColor
-                )
+                CardsRow(cards = uiState.game.level.cards, textColor = theme.textColor)
                 Spacer(Modifier.height(10.dp))
                 Text(
                     "Try to remember all the moves and the start number!",
@@ -186,31 +156,42 @@ fun MathMemoryMixScreen(
                 )
             }
 
-            // Vertical answer options (only in SOLVE phase)
             if (phase == "SOLVE") {
                 Spacer(Modifier.height(16.dp))
                 AnswerOptionsColumn(
                     options = answerOptions,
-                    onSelect = { selected ->
-                        viewModel.onAction(MathMemoryAction.InputChanged(selected.value.toString()))
+                    onSelect = {
+                        viewModel.onAction(MathMemoryAction.InputChanged(it.value.toString()))
                         viewModel.onAction(MathMemoryAction.SubmitAnswer)
                     },
                     selectedTheme = theme
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Tip: Start at ${uiState.game.level.start}, do every step one after another.",
+                    "Tip: Start at ${uiState.game.level.start}, do every step one after another.",
                     color = Color.White,
                     style = MaterialTheme.typography.bodySmall
                 )
+
+                if (!secondChanceUsed) {
+                    Button(
+                        onClick = {
+                            // TODO: Show rewarded ad here
+                            secondChanceUsed = true
+                            showMemorizePhaseAgain = true
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD600))
+                    ) {
+                        Text("👁 Watch Ad to See Moves Again")
+                    }
+                }
             }
 
-            // Result feedback
             if (phase == "RESULT") {
-
                 Spacer(Modifier.height(10.dp))
                 ResultSection(
-                    isCorrect = uiState.game.isCorrect,
+                    isCorrect = isCorrect,
                     onNext = { viewModel.onAction(MathMemoryAction.NextLevel) },
                     onRetry = { viewModel.onAction(MathMemoryAction.ResetGame) },
                     textColor = theme.textColor,
@@ -220,7 +201,25 @@ fun MathMemoryMixScreen(
             }
         }
     }
+
+    if (showUnlockAnimation && !themeName.isNullOrEmpty()) {
+        AnimatedUnlockBanner(
+            themeName = themeName!!,
+            onContinue = { viewModel.onUnlockAnimationDismiss() }
+        )
+    }
+
+    if (showMemorizePhaseAgain) {
+        LaunchedEffect(Unit) {
+            viewModel.onAction(MathMemoryAction.RevealCards)
+            kotlinx.coroutines.delay(3000)
+            viewModel.onAction(MathMemoryAction.HideCards)
+            showMemorizePhaseAgain = false
+        }
+    }
 }
+
+
 
 // The following can be outside or in separate file ----------------------------------
 
@@ -247,29 +246,29 @@ fun CardsRow(cards: List<MemoryCard>, textColor: Color) {
         horizontalArrangement = Arrangement.spacedBy(18.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-       item {
-           cards.forEach { card ->
-               ElevatedCard(
-                   modifier = Modifier.size(64.dp),
-                   shape = RoundedCornerShape(16.dp),
-                   colors = CardDefaults.elevatedCardColors(containerColor = Color.White.copy(alpha = 0.94f)),
-                   elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-               ) {
-                   Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                       Text(
-                           text = when (card.op) {
-                               Op.ADD -> "+${card.value}"
-                               Op.SUB -> "-${card.value}"
-                               Op.MUL -> "×${card.value}"
-                               Op.DIV -> "÷${card.value}"
-                           },
-                           color = textColor,
-                           style = MaterialTheme.typography.headlineMedium
-                       )
-                   }
-               }
-           }
-       }
+        item {
+            cards.forEach { card ->
+                ElevatedCard(
+                    modifier = Modifier.size(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = Color.White.copy(alpha = 0.94f)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = when (card.op) {
+                                Op.ADD -> "+${card.value}"
+                                Op.SUB -> "-${card.value}"
+                                Op.MUL -> "×${card.value}"
+                                Op.DIV -> "÷${card.value}"
+                            },
+                            color = textColor,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                }
+            }
+        }
 
 
     }

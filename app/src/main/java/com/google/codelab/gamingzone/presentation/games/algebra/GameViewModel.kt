@@ -95,12 +95,12 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
 
             val currentMax =
-                levelRepository.getMaxUnlockedLevel().first() // get latest value from flow
+                levelRepository.getMaxUnlockedLevel(gameId = "algebra").first() // get latest value from flow
             Log.d("Level", "Current max: $currentMax")
             Log.d("Level", "Current level: $currentLevel")
 
             if (currentLevel >= currentMax) {
-                levelRepository.unlockNextLevelIfNeeded(currentLevel)
+                levelRepository.unlockNextLevelIfNeeded(currentLevel, gameId = "algebra")
             }
 
         }
@@ -117,7 +117,7 @@ class GameViewModel @Inject constructor(
     private fun unlockNextLevelIfNeeded() {
         viewModelScope.launch {
             val nextLevel = currentLevel + 1
-            levelRepository.unlockNextLevelIfNeeded(currentLevel)
+            levelRepository.unlockNextLevelIfNeeded(currentLevel, gameId = "algebra")
             _maxUnlockedLevel.value = nextLevel  // update local cache
             Log.d("Level", "Unlocked next level: $nextLevel")
         }
@@ -125,8 +125,8 @@ class GameViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            levelRepository.ensureInitialized()
-            levelRepository.getMaxUnlockedLevel().collect { level ->
+            levelRepository.ensureInitialized(gameId = "algebra")
+            levelRepository.getMaxUnlockedLevel(gameId = "algebra").collect { level ->
                 _maxUnlockedLevel.value = level
                 Log.d("Level", "Collected max unlocked level = $level")
             }
@@ -230,19 +230,17 @@ class GameViewModel @Inject constructor(
         }
 
         // Save to repository
-        viewModelScope.launch {
-            statsRepository.updateGameResult(
-                userId = statsRepository.initUserIfNeeded(),
-                gameName = "algebra",
-                levelReached = currentLevel,
-                won = false,
-                xpGained = 0,
-                currentStreak = 0,
-                bestStreak = 0,
-                hintsUsed = 0,
-                timeSpentSeconds = timeSec
-            )
-        }
+//        viewModelScope.launch {
+//            statsRepository.updateGameResult(
+//                userId = statsRepository.initUserIfNeeded(),
+//                gameName = "algebra",
+//                levelReached = currentLevel,
+//                won = false,
+//                xpGained = 0,
+//                hintsUsed = 0,
+//                timeSpentSeconds = timeSec
+//            )
+//        }
 
         val time = timeSec/60
 
@@ -266,43 +264,7 @@ class GameViewModel @Inject constructor(
                 streak = _currentStreak.value,
                 bestStreak = _bestStreak.value,
                 hintsUsed = _hintsUsed.value,
-                timeSpent = timeSec,
-            )
-
-            viewModelScope.launch {
-                dailyMissionRepository.updateMissionProgress(
-                    gameName = "algebra",
-                    missionType = "play_games",
-                    incrementBy = 1,
-                    userId = statsRepository.initUserIfNeeded()
-                )
-            }
-
-            viewModelScope.launch {
-                statsRepository.updateGameResult(
-                    userId = statsRepository.initUserIfNeeded(),
-                    gameName = "algebra",
-                    levelReached = currentLevel,
-                    won = correct,
-                    xpGained = 0,
-                    currentStreak = _currentStreak.value,
-                    bestStreak = _bestStreak.value,
-                    hintsUsed = _hintsUsed.value,
-                    timeSpentSeconds = timeSec
-                )
-            }
-            endGame()
-        } else if ((_score.value / 100) > _level.value) {
-            markLevelCompleted()
-            _gameResult.value = GameResult(
-                level = currentLevel,
-                won = true,
-                xpEarned = xp,
-                score = _score.value,
-                streak = _currentStreak.value,
-                bestStreak = _bestStreak.value,
-                hintsUsed = _hintsUsed.value,
-                timeSpent = timeSec
+                timeSpent = _time.value.toLong(),
             )
 
             viewModelScope.launch {
@@ -321,10 +283,42 @@ class GameViewModel @Inject constructor(
                     levelReached = currentLevel,
                     won = correct,
                     xpGained = xp,
-                    currentStreak = _currentStreak.value,
-                    bestStreak = _bestStreak.value,
                     hintsUsed = _hintsUsed.value,
-                    timeSpentSeconds = timeSec
+                    timeSpentSeconds = _time.value.toLong()
+                )
+            }
+            endGame()
+        } else if ((_score.value / 100) > _level.value) {
+            markLevelCompleted()
+            _gameResult.value = GameResult(
+                level = currentLevel,
+                won = true,
+                xpEarned = xp,
+                score = _score.value,
+                streak = _currentStreak.value,
+                bestStreak = _bestStreak.value,
+                hintsUsed = _hintsUsed.value,
+                timeSpent = _time.value.toLong()
+            )
+
+            viewModelScope.launch {
+                dailyMissionRepository.updateMissionProgress(
+                    gameName = "algebra",
+                    missionType = "play_games",
+                    incrementBy = 1,
+                    userId = statsRepository.initUserIfNeeded()
+                )
+            }
+
+            viewModelScope.launch {
+                statsRepository.updateGameResult(
+                    userId = statsRepository.initUserIfNeeded(),
+                    gameName = "algebra",
+                    levelReached = currentLevel,
+                    won = correct,
+                    xpGained = xp,
+                    hintsUsed = _hintsUsed.value,
+                    timeSpentSeconds = _time.value.toLong()
                 )
             }
             endGame()

@@ -36,8 +36,6 @@ class MathMemoryStatsRepositoryImpl @Inject constructor(
                 losses = if (!isWin) 1 else 0,
                 xp = xp,
                 highestLevel = level,
-                bestStreak = bestStreak,
-                currentStreak = streak,
                 totalHintsUsed = hintsUsed,
                 totalTimeSeconds = timeSpentSec
             )
@@ -49,8 +47,6 @@ class MathMemoryStatsRepositoryImpl @Inject constructor(
                 losses = old.losses + if (!isWin) 1 else 0,
                 xp = old.xp + xp,
                 highestLevel = maxOf(old.highestLevel, level),
-                bestStreak = maxOf(old.bestStreak, bestStreak),
-                currentStreak = streak,
                 totalHintsUsed = old.totalHintsUsed + hintsUsed,
                 totalTimeSeconds = old.totalTimeSeconds + timeSpentSec
             )
@@ -64,8 +60,6 @@ class MathMemoryStatsRepositoryImpl @Inject constructor(
             levelReached = level,
             won = isWin,
             xpGained = xp,
-            currentStreak = streak,
-            bestStreak = bestStreak,
             hintsUsed = hintsUsed,
             timeSpentSeconds = timeSpentSec
         )

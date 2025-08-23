@@ -23,7 +23,8 @@ object StatsModule {
     @Provides
     @Singleton
     fun provideStatsDatabase(@ApplicationContext appContext: Context): StatsDatabase =
-        Room.databaseBuilder(appContext, StatsDatabase::class.java, "stats_db").build()
+        Room.databaseBuilder(appContext, StatsDatabase::class.java, "stats_db")
+            .fallbackToDestructiveMigration().build()
 
     @Provides
     fun providePerGameStatsDao(db: StatsDatabase): PerGameStatsDao = db.perGameStatsDao()

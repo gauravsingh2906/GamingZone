@@ -16,7 +16,7 @@ import com.google.codelab.gamingzone.data.local2.entity.DailyMissionEntity
 
 @Database(
     entities = [UserEntity::class, TotalStatsEntity::class, PerGameStatsEntity::class, AdvancedStatsEntity::class, LevelProgressEntity::class, DailyMissionEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -256,7 +256,6 @@ fun MathAlgebraGameScreen(
                 // Bottom actions
                 BottomBar(
                     onHint = {
-                        viewModel.useHint()
                         //  feedback = "Hint: think step-by-step!"
                         googleAdManager.loadRewardedAd(adMobAdUnitId) { loaded ->
                             if (loaded && activity != null) {
@@ -264,6 +263,7 @@ fun MathAlgebraGameScreen(
                                     activity,
                                     onUserEarnedReward = {
                                         showHint = true
+                                        viewModel.useHint()
                                     },
                                     onClosed = {}
                                 )

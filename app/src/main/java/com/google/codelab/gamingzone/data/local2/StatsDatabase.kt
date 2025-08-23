@@ -9,7 +9,7 @@ import com.google.codelab.gamingzone.data.local2.entity.PerGameStatsEntity
 
 @Database(
     entities = [PerGameStatsEntity::class, OverallProfileEntity::class],
-    version = 1)
+    version = 3)
 abstract class StatsDatabase : RoomDatabase() {
 
     abstract fun perGameStatsDao(): PerGameStatsDao

@@ -15,8 +15,6 @@ data class PerGameStatsEntity(
     val draws: Int = 0,
     val xp: Int = 0,
     val highestLevel: Int = 0,
-    val bestStreak: Int = 0,
-    val currentStreak: Int = 0,
     val totalHintsUsed: Int = 0,
     val totalTimeSeconds: Long = 0L
 )

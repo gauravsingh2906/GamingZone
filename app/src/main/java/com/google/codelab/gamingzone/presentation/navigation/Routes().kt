@@ -59,7 +59,7 @@ sealed class Routes {
     data class AlgebraGameScreen(val level: Int) : Routes()
 
     @Serializable
-    data object LevelSelection: Routes()
+    data class LevelSelection(val id: String): Routes()
 
    @Serializable
    data object DailyMissionScreen : Routes()

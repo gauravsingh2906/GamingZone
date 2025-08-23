@@ -24,8 +24,6 @@ class StatsRepositoryImpl @Inject constructor(
         levelReached: Int,
         won: Boolean,
         xpGained: Int,
-        currentStreak: Int,
-        bestStreak: Int,
         hintsUsed: Int,
         timeSpentSeconds: Long
     ) {
@@ -43,8 +41,6 @@ class StatsRepositoryImpl @Inject constructor(
                 losses = if (!won) 1 else 0,
                 xp = xpGained,
                 highestLevel = levelReached,
-                bestStreak = bestStreak,
-                currentStreak = currentStreak,
                 totalHintsUsed = hintsUsed,
                 totalTimeSeconds = timeSpentSeconds
             )
@@ -55,8 +51,6 @@ class StatsRepositoryImpl @Inject constructor(
                 losses = perGame.losses + if (!won) 1 else 0,
                 xp = perGame.xp + xpGained,
                 highestLevel = maxOf(perGame.highestLevel, levelReached),
-                bestStreak = maxOf(perGame.bestStreak, bestStreak),
-                currentStreak = currentStreak,
                 totalHintsUsed = perGame.totalHintsUsed + hintsUsed,
                 totalTimeSeconds = perGame.totalTimeSeconds + timeSpentSeconds
             )
@@ -73,7 +67,6 @@ class StatsRepositoryImpl @Inject constructor(
                 totalLosses = if (!won) 1 else 0,
                 totalXP = xpGained,
                 overallHighestLevel = levelReached,
-                bestStreak = bestStreak,
                 totalHintsUsed = hintsUsed,
                 totalTimeSeconds = timeSpentSeconds
             )
@@ -84,7 +77,6 @@ class StatsRepositoryImpl @Inject constructor(
                 totalLosses = overall.totalLosses + if (!won) 1 else 0,
                 totalXP = overall.totalXP + xpGained,
                 overallHighestLevel = maxOf(overall.overallHighestLevel, levelReached),
-                bestStreak = maxOf(overall.bestStreak, bestStreak),
                 totalHintsUsed = overall.totalHintsUsed + hintsUsed,
                 totalTimeSeconds = overall.totalTimeSeconds + timeSpentSeconds
             )
@@ -139,4 +131,10 @@ class StatsRepositoryImpl @Inject constructor(
 
     override suspend fun getPerGameStats(userId: String, gameName: String) =
         perGameStatsDao.getStatsForGame(userId, gameName)
+
+    override suspend fun updateMathMemoryCurrentLevel(userId: String, level: Int) {
+        val profile = overallProfileDao.getProfile(userId) ?: return
+        overallProfileDao.updateProfile(profile.copy(mathMemoryCurrentLevel = level))
+    }
+
 }

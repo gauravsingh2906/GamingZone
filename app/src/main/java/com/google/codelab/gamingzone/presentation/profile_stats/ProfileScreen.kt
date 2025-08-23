@@ -124,11 +124,11 @@ fun ProfileScreen(
         // Overall stats
         SectionCard(title = "Overall Stats") {
             StatsRow("Total Games", profile.totalGamesPlayed)
-            StatsRow("Wins 🏆", profile.totalWins)
-            StatsRow("Losses ❌", profile.totalLosses)
-            StatsRow("Best Streak 🔥", profile.bestStreak)
+            StatsRow("Total Wins 🏆", profile.totalWins)
+            StatsRow("Total Losses ❌", profile.totalLosses)
+            StatsRow("Total XP ", profile.totalXP)
             StatsRow("Highest Level 📈", profile.overallHighestLevel)
-            StatsRow("Hints 💡", profile.totalHintsUsed)
+            StatsRow("Total Hints Used 💡", profile.totalHintsUsed)
             StatsRow("Time ⏱", "${profile.totalTimeSeconds / 60} min")
         }
 
@@ -168,7 +168,7 @@ fun ProfileScreen(
                                 Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("Streak: ${gameStats.bestStreak}")
+                                Text("Losses: ${gameStats.losses}")
                                 Text("Hints: ${gameStats.totalHintsUsed}")
                                 Text("Time: ${gameStats.totalTimeSeconds / 60} min")
                             }
@@ -201,9 +201,9 @@ fun StatChip(icon: String, label: String, value: String) {
 
 @Composable
 fun LevelCarousel(profile: OverallProfileEntity) {
-    val currentLevel = profile.overallHighestLevel
+    val currentLevel = profile.finalLevel
     val currentXP = profile.totalXP
-    val xpForNextLevel = (currentLevel) * 500  // example XP rule
+    val xpForNextLevel = (currentLevel) * 100  // example XP rule
     val progress = currentXP.toFloat() / xpForNextLevel.toFloat()
     val xpNeeded = xpForNextLevel - currentXP
 

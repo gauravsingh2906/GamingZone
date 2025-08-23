@@ -15,6 +15,11 @@ class LevelManager(
         }
         return cachedLevel!!
     }
+
+    fun setLevel(level: Int) {
+        currentLevelNumber = if (level < 1) 1 else level
+        cachedLevel = null
+    }
     fun nextLevel() {
         currentLevelNumber++
         cachedLevel = null

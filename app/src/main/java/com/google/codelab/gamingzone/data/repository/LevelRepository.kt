@@ -10,19 +10,19 @@ import javax.inject.Inject
 class LevelRepository @Inject constructor(
     private val dao: LevelProgressDao
 ) {
-    private val gameId = "algebra" // you can make this dynamic if needed
+   // private val gameId = "algebra" // you can make this dynamic if needed
 
-    fun getMaxUnlockedLevel(): Flow<Int> =
+    fun getMaxUnlockedLevel(gameId: String): Flow<Int> =
         dao.getMaxUnlockedLevel(gameId).map { it ?: 1 }
 
-    suspend fun unlockNextLevelIfNeeded(currentLevel: Int) {
+    suspend fun unlockNextLevelIfNeeded(currentLevel: Int,gameId: String) {
         val maxLevel = dao.getMaxUnlockedLevelOnce(gameId) ?: 1
         if (currentLevel >= maxLevel) {
             dao.updateMaxUnlockedLevel(gameId, currentLevel + 1)
         }
     }
 
-    suspend fun ensureInitialized() {
+    suspend fun ensureInitialized(gameId: String) {
         val existing = dao.getMaxUnlockedLevelOnce(gameId)
         if (existing == null) {
             dao.insert(LevelProgressEntity(gameId = gameId, maxUnlockedLevel = 1))

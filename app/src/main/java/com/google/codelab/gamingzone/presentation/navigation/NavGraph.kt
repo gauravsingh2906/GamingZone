@@ -184,7 +184,7 @@ fun NavGraph(
                     } else if (gameItem.id == "math_memory") {
                         navController.navigate(Routes.MathMemoryMixScreen)
                     } else if (gameItem.id == "algebra") {
-                        navController.navigate(Routes.LevelSelection)
+                        navController.navigate(Routes.LevelSelection("algebra"))
                     }
                 },
                 onBack = {
@@ -203,9 +203,15 @@ fun NavGraph(
 
             val viewModel: LevelSelectionViewModel = hiltViewModel()
 
+            val id = it.toRoute<Routes.LevelSelection>().id
+
             val gameViewModel: GameViewModel = hiltViewModel()
 
             val maxUnlocked by viewModel.maxUnlockedLevel.collectAsState()
+
+           // val gameId = viewModel.gameId.value
+
+
 
             Log.d("Nav Level",maxUnlocked.toString())
 
@@ -214,11 +220,20 @@ fun NavGraph(
 
             LevelBasedScreen(
                 onLevelClick = { level ->
-                    Log.e("Nav Level Inside", "nav level inside$level")
-                    if (level <= maxUnlocked) {
-                        gameViewModel.setLevel(level)
-                        navController.navigate(Routes.AlgebraGameScreen(level))
+                    if (id == "algebra") {
+                        Log.e("Nav Level Inside", "Algebra nav level inside$level")
+                        if (level <= maxUnlocked) {
+                            gameViewModel.setLevel(level)
+                            navController.navigate(Routes.AlgebraGameScreen(level))
+                        }
+                    } else if (id == "math_memory") {
+                        Log.e("Nav Level Inside", "Math nav level inside$level")
+                        if (level <= maxUnlocked) {
+                            gameViewModel.setLevel(level)
+                          //  navController.navigate(Routes.MathMemoryMixScreen(level))
+                        }
                     }
+
                 },
                 maxUnlockedLevel = maxUnlocked,
             )
@@ -341,8 +356,6 @@ fun NavGraph(
                                 level = 1,
                                 won = true,
                                 xp = state.value.xpEarned,
-                                streak = 1,
-                                bestStreak = 3,
                                 hints = viewModel.state.value.hintsUsed,
                                 timeSec = viewModel.state.value.elapsedTime.toLong()
                             )
@@ -390,8 +403,6 @@ fun NavGraph(
                                 level = 1,
                                 won = false,
                                 xp = state.value.xpEarned,
-                                streak = 1,
-                                bestStreak = 3,
                                 hints = viewModel.state.value.hintsUsed,
                                 timeSec = viewModel.state.value.elapsedTime.toLong()
                             )

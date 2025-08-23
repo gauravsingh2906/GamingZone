@@ -49,7 +49,7 @@ class StatsViewModel @Inject constructor(
 //
 //    val username = "${adjectives.random()}${nouns.random()}_$number"
 
-    var defaultAvatarId = listOf<Int>(R.drawable.avatar_1,R.drawable.ic_star1)
+    var defaultAvatarId = listOf<Int>(R.drawable.avatar_1, R.drawable.ic_star1)
     val defaultUnlockedAvatars = defaultAvatarId
 
 
@@ -57,7 +57,7 @@ class StatsViewModel @Inject constructor(
         // create user row if needed and set _userId
         viewModelScope.launch {
             val id = statsRepo.initUserIfNeeded()
-            Log.d("Id-stats",id)
+            Log.d("Id-stats", id)
             _userId.value = id
             loadProfile(id)
             loadMissions(id)
@@ -67,11 +67,11 @@ class StatsViewModel @Inject constructor(
     fun loadProfile(userId: String) {
         viewModelScope.launch {
             _profile.value = statsRepo.getProfile(userId)
-            Log.d("User",_profile.value.toString())
+            Log.d("User", _profile.value.toString())
             _perGameStats.value = listOfNotNull(
                 statsRepo.getPerGameStats(userId, "sudoku"),
                 statsRepo.getPerGameStats(userId, "math_memory"),
-                statsRepo.getPerGameStats(userId,"algebra")
+                statsRepo.getPerGameStats(userId, "algebra")
 
             )
         }
@@ -79,10 +79,10 @@ class StatsViewModel @Inject constructor(
 
     fun updateGameAndProfile(
         userId: String, gameName: String, level: Int, won: Boolean, xp: Int,
-        streak: Int, bestStreak: Int, hints: Int, timeSec: Long
+        hints: Int, timeSec: Long
     ) = viewModelScope.launch {
         statsRepo.updateGameResult(
-            userId = userId, gameName, level, won, xp, streak, bestStreak, hints, timeSec
+            userId = userId, gameName, level, won, xp, hints, timeSec
         )
         loadProfile(userId)
     }
@@ -108,10 +108,10 @@ class StatsViewModel @Inject constructor(
         }
     }
 
-    fun updateProgress(gameName: String,missionType:String, minutes: Int) {
+    fun updateProgress(gameName: String, missionType: String, minutes: Int) {
         viewModelScope.launch {
             dailyMissionRepo.updateMissionProgress(
-                userId = _userId.value ?: return@launch ,
+                userId = _userId.value ?: return@launch,
                 gameName = gameName,
                 missionType = missionType,
                 incrementBy = minutes
@@ -124,7 +124,7 @@ class StatsViewModel @Inject constructor(
         statsRepo.updateUsername(userId, username)
     }
 
-    fun changeAvatar(userId: String, avatarUri:Int) = viewModelScope.launch {
+    fun changeAvatar(userId: String, avatarUri: Int) = viewModelScope.launch {
         statsRepo.updateAvatar(userId, avatarUri)
     }
 }

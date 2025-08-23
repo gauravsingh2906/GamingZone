@@ -15,8 +15,6 @@ interface StatsRepository {
         levelReached: Int,
         won: Boolean,
         xpGained: Int,
-        currentStreak: Int,
-        bestStreak: Int,
         hintsUsed: Int,
         timeSpentSeconds: Long
     )
@@ -29,4 +27,8 @@ interface StatsRepository {
 
     suspend fun getProfile(userId: String): OverallProfileEntity?
     suspend fun getPerGameStats(userId: String, gameName: String): PerGameStatsEntity?
+
+
+    suspend fun updateMathMemoryCurrentLevel(userId: String, level: Int)
+
 }
