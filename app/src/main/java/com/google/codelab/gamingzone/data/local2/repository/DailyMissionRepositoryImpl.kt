@@ -116,10 +116,12 @@ class DailyMissionRepositoryImpl @Inject constructor(
         val today = todayDate()
         val missions = dao.getMissionsForDate(today)
 
+        val minutes = minutesPlayed/60
+
 
         Log.d("Progress", minutesPlayed.toString())
         missions.find { it.gameName.toLowerCase(Locale.ROOT) == gameName }?.let { mission ->
-            val updatedProgress = mission.progressMinutes + minutesPlayed
+            val updatedProgress = mission.progressMinutes + minutes
             Log.d("Progress", minutesPlayed.toString())
             Log.d("Progress", updatedProgress.toString())
             val completed = updatedProgress >= mission.requiredMinutes

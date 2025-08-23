@@ -55,6 +55,10 @@ class GameViewModel @Inject constructor(
     private val _gameOver = MutableStateFlow(false)
     val gameOver: StateFlow<Boolean> = _gameOver
 
+    private val _time = MutableStateFlow(0)
+    val timePlayed: StateFlow<Int> = _time
+
+
     private val _levelCompleted = MutableStateFlow(false)
     val levelCompleted: StateFlow<Boolean> = _levelCompleted
 
@@ -239,12 +243,14 @@ class GameViewModel @Inject constructor(
 
         val time = timeSec/60
 
-        viewModelScope.launch {
-            dailyMissionRepository.updateMissionProgress(
-                gameName = "algebra",
-                minutesPlayed = timeSec.toInt()
-            )
-        }
+        _time.value = _time.value + timeSec.toInt() // total time in seconds
+
+//        viewModelScope.launch {
+//            dailyMissionRepository.updateMissionProgress(
+//                gameName = "algebra",
+//                minutesPlayed = _time.value
+//            )
+//        }
 
 
         // If game over (wrong answer or time out)
@@ -259,6 +265,13 @@ class GameViewModel @Inject constructor(
                 hintsUsed = _hintsUsed.value,
                 timeSpent = timeSec,
             )
+
+            viewModelScope.launch {
+                dailyMissionRepository.updateMissionProgress(
+                    gameName = "algebra",
+                    minutesPlayed = _time.value
+                )
+            }
 
             viewModelScope.launch {
                 statsRepository.updateGameResult(
@@ -286,6 +299,13 @@ class GameViewModel @Inject constructor(
                 hintsUsed = _hintsUsed.value,
                 timeSpent = timeSec
             )
+
+            viewModelScope.launch {
+                dailyMissionRepository.updateMissionProgress(
+                    gameName = "algebra",
+                    minutesPlayed = _time.value
+                )
+            }
 
             viewModelScope.launch {
                 statsRepository.updateGameResult(

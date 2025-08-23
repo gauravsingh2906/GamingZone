@@ -330,7 +330,7 @@ fun NavGraph(
                             val time = viewModel.state.value.elapsedTime
                             dailyMissionViewModel.updateProgress(
                                 gameName = "sudoku",
-                                minutes = (time/60).toLong()
+                                minutes = viewModel.state.value.elapsedTime
                             )
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(
@@ -372,7 +372,7 @@ fun NavGraph(
                             val time = viewModel.state.value.elapsedTime
                             dailyMissionViewModel.updateProgress(
                                 gameName = "sudoku",
-                                minutes = (time/60).toLong()
+                                minutes = viewModel.state.value.elapsedTime
                             )
                             userStatsViewModel.advancedStats("sudoku")
                             newViewModel.updateGameAndProfile(
